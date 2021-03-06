@@ -1,2 +1,0 @@
-# IC705SMeter
-IC705 SMeter
