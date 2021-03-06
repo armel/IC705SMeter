@@ -8,7 +8,7 @@
 
 #define VERSION 0.1
 #define AUTHOR  "F4HWN"
-#define NAME    "IC750Meter"
+#define NAME    "IC705Meter"
 
 float x_new;
 float y_new;
