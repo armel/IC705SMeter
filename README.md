@@ -1,2 +1,2 @@
-# IC705Remote
-IC705 Remote
+# IC705SMeter
+IC705 SMeter
