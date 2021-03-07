@@ -39,7 +39,7 @@ void loop()
     uint8_t y = 0;
 
     uint8_t counter = 0;
-    uint8_t buffer[12]; 
+    uint8_t buffer[1024]; 
     uint8_t byte1, byte2, byte3;
 
     uint8_t request[] = {0xFE, 0xFE, 0xA4, IC705_ADDRESS, 0x15, 0x02, 0xFD};
@@ -53,7 +53,7 @@ void loop()
         CAT.write(request[i]);
     }
 
-    delay(20);
+    delay(25);
 
     while (CAT.available())
     {
@@ -93,7 +93,7 @@ void loop()
             else 
             {
                 angle = -((47 / 120.0f) * (sMeterVal0 - 120));
-                sMeterString = "S9+" + String(int(round(sMeterVal1)));
+                sMeterString = "S9+" + String(int(round(sMeterVal1))) + "dB";
             }
 
             // Draw line
@@ -120,6 +120,6 @@ void loop()
             M5.Lcd.setTextPadding(0);
             M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 230);
         }
-        delay(100);
+        delay(25);
     }
 }
