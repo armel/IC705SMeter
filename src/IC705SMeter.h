@@ -8,7 +8,7 @@
 
 #define VERSION "0.4"
 #define AUTHOR "F4HWN"
-#define NAME "IC705Meter"
+#define NAME "IC705SMeter"
 
 #define IC705_ADDRESS 0xE0 // IC705 default address
 
