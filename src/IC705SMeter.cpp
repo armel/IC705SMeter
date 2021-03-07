@@ -32,13 +32,14 @@ void loop()
     uint8_t sMeterVal0 = 0;
     float_t sMeterVal1 = 0;  
     float_t sMeterVal2 = 0;
+    static uint8_t sMeterVal3 = 0;
 
     float_t angle = 0;
 
-    uint8_t x = 0;
-    uint8_t y = 0;
+    uint16_t x = 0;
+    uint16_t y = 0;
 
-    uint8_t counter = 0;
+    uint16_t counter = 0;
     uint8_t buffer[1024]; 
     uint8_t byte1, byte2, byte3;
 
@@ -80,49 +81,59 @@ void loop()
                 sMeterVal2 = sMeterVal0 - (sMeterVal1 * 2);
             }
 
-            M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
-            M5.Lcd.fillRect(120,160,80,59, TFT_WHITE);
-
-            if(sMeterVal0 <= 106) 
-            {
-                angle = map(sMeterVal0, 0, 106, 52, 0); // SMeter image start at S1 so S0 is out of image on the left... (angle 52)
-                //angle = 47 - ((47 / 120.0f) * sMeterVal0);
-                sMeterString = "S" + String(int(round(sMeterVal1)));
-            }
-            else 
-            {
-                angle = - map(sMeterVal0, 107, 240, 0, 47);
-                //angle = -((47 / 120.0f) * (sMeterVal0 - 120));
-                sMeterString = "S9+" + String(int(round(sMeterVal1))) + "dB";
-            }
-
-            Serial.print(sMeterVal1);
+            Serial.print(sMeterVal0);
             Serial.print(" ");
-            Serial.println(angle);
+            Serial.println(sMeterVal3);
 
-            // Draw line
+            if(abs(sMeterVal0 - sMeterVal3) > 2) {
+                sMeterVal3 = sMeterVal0;
 
-            x = 0;
-            y = 180;
+                M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
+                M5.Lcd.fillRect(120,160,80,59, TFT_WHITE);
 
-            rotate(x, y, angle);
+                if(sMeterVal0 <= 120) 
+                {
+                    angle = map(sMeterVal0, 0, 120, 52, -5); // SMeter image start at S1 so S0 is out of image on the left... (angle 52)
+                    //angle = 47 - ((47 / 120.0f) * sMeterVal0);
+                    sMeterString = "S" + String(int(round(sMeterVal1)));
+                }
+                else 
+                {
+                    angle = - map(sMeterVal0, 121, 240, 5, 47);
+                    //angle = -((47 / 120.0f) * (sMeterVal0 - 120));
+                    sMeterString = "S9+" + String(int(round(sMeterVal1))) + "dB";
+                }
 
-            x = 160 + int(xNew);
-            y = 200 - int(yNew);
+                Serial.print(sMeterVal0);
+                Serial.print(" ");
+                Serial.print(sMeterVal1);
+                Serial.print(" ");
+                Serial.println(angle);
 
-            M5.Lcd.drawLine(160, 200, x, y, BLACK);
+                // Draw line
 
-            // Write SMeter
-            M5.Lcd.setTextDatum(CC_DATUM);
+                x = 0;
+                y = 180;
 
-            M5.Lcd.setFreeFont(&rounded_led_board10pt7b);
-            M5.Lcd.setTextPadding(320);
-            M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
-            M5.Lcd.drawString(sMeterString, 160, 200);
+                rotate(x, y, angle);
 
-            M5.Lcd.setFreeFont(0);
-            M5.Lcd.setTextPadding(0);
-            M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 230);
+                x = 160 + int(xNew);
+                y = 200 - int(yNew);
+
+                M5.Lcd.drawLine(160, 200, x, y, BLACK);
+
+                // Write SMeter
+                M5.Lcd.setTextDatum(CC_DATUM);
+
+                M5.Lcd.setFreeFont(&rounded_led_board10pt7b);
+                M5.Lcd.setTextPadding(320);
+                M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
+                M5.Lcd.drawString(sMeterString, 160, 200);
+
+                M5.Lcd.setFreeFont(0);
+                M5.Lcd.setTextPadding(0);
+                M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 230);
+            }
         }
         delay(25);
     }
