@@ -32,7 +32,7 @@ void loop()
     uint8_t sMeterVal0 = 0;
     float_t sMeterVal1 = 0;  
     float_t sMeterVal2 = 0;
-    static uint8_t sMeterVal3 = 0;
+    static uint8_t sMeterVal3 = -1;
 
     float_t angle = 0;
 
@@ -120,7 +120,11 @@ void loop()
                 x = 160 + int(xNew);
                 y = 200 - int(yNew);
 
-                M5.Lcd.drawLine(160, 200, x, y, BLACK);
+                M5.Lcd.drawLine(162, 200, x, y, TFT_DARKGREY);
+                M5.Lcd.drawLine(161, 200, x, y, TFT_BLACK);
+                M5.Lcd.drawLine(160, 200, x, y, TFT_BLACK);
+                M5.Lcd.drawLine(159, 200, x, y, TFT_BLACK);
+                M5.Lcd.drawLine(158, 200, x, y, TFT_DARKGREY);
 
                 // Write SMeter
                 M5.Lcd.setTextDatum(CC_DATUM);
