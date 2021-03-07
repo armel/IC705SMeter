@@ -6,11 +6,13 @@
 #include <font.h>
 #include <image.h>
 
-#define VERSION 0.1
-#define AUTHOR  "F4HWN"
-#define NAME    "IC705Meter"
+#define VERSION 0.2
+#define AUTHOR "F4HWN"
+#define NAME "IC705Meter"
 
-float x_new;
-float y_new;
+#define IC705_ADDRESS 0xE0 // IC705 default address
+
+float xNew;
+float yNew;
 
 BluetoothSerial CAT;

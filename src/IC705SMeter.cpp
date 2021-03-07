@@ -6,8 +6,8 @@
 void rotate(float x, float y, float angle) {
     angle = angle * PI/180;
 
-    x_new = x * cos(angle) - y * sin(angle);
-    y_new = x * sin(angle) + y * cos(angle);
+    xNew = x * cos(angle) - y * sin(angle);
+    yNew = x * sin(angle) + y * cos(angle);
 }
 
 void setup()
@@ -29,22 +29,24 @@ void loop()
 {
     String sMeterString;
 
-    int x = 0;
-    int y = 0;
+    uint8_t sMeterVal0 = 0;
+    float_t sMeterVal1 = 0;  
+    float_t sMeterVal2 = 0;
 
-    float sMeterVal0 = 0;
-    float sMeterVal1 = 0;  
-    float sMeterVal2 = 0;
+    float_t angle = 0;
 
-    float angle = 0;
+    uint8_t x = 0;
+    uint8_t y = 0;
 
     uint8_t counter = 0;
-    uint8_t read_buffer[12]; //Read buffer
+    uint8_t buffer[12]; 
     uint8_t byte1, byte2, byte3;
 
-    char str[9];
+    uint8_t request[] = {0xFE, 0xFE, 0xA4, IC705_ADDRESS, 0x15, 0x02, 0xFD};
 
-    uint8_t request[] = {0xFE, 0xFE, 0xA4, 0xE0, 0x15, 0x02, 0xFD};
+    char str[12];
+   
+    CAT.connect();
 
     for (uint8_t i = 0; i < sizeof(request); i++)
     {
@@ -62,42 +64,26 @@ void loop()
             counter = 0;
             byte3 = CAT.read();
             while(byte3 != 0xFD) {
-                read_buffer[counter] = byte3;
+                buffer[counter] = byte3;
                 byte3 = CAT.read();
                 counter++;
             }
         }
         if(counter == 6) {
-            sprintf(str, "%02x%02x", read_buffer[4], read_buffer[5]);
+            sprintf(str, "%02x%02x", buffer[4], buffer[5]);
             sMeterVal0 = atoi(str);
 
-            if(sMeterVal0 <= 120) {
+            if(sMeterVal0 <= 120) {     // 120 = S9 = 9 * (40/3)
                 sMeterVal1 = sMeterVal0 / (40/3);
                 sMeterVal2 = sMeterVal0 - (sMeterVal1 * (40/3));
-
-                Serial.print(sMeterVal0);
-                Serial.print(" ");
-                Serial.print("S");
-                Serial.print(sMeterVal1);
-                Serial.print(", ");
-                Serial.print(sMeterVal2);
-                Serial.println("");
             }
-            else {
+            else {                      // 240 = S9 + 60 
                 sMeterVal1 = (sMeterVal0 - 120) / 2;
                 sMeterVal2 = sMeterVal0 - (sMeterVal1 * 2);
-
-                Serial.print(sMeterVal0);
-                Serial.print(" ");
-                Serial.print("S9+");
-                Serial.print(sMeterVal1);
-                Serial.print(", ");
-                Serial.print(sMeterVal2);
-                Serial.println("");
             }
 
             M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
-            M5.Lcd.fillRect(120,160,80,79, TFT_WHITE);
+            M5.Lcd.fillRect(120,160,80,59, TFT_WHITE);
 
             if(sMeterVal0 <= 120) 
             {
@@ -117,13 +103,12 @@ void loop()
 
             rotate(x, y, angle);
 
-            x = 160 + int(x_new);
-            y = 200 - int(y_new);
+            x = 160 + int(xNew);
+            y = 200 - int(yNew);
 
             M5.Lcd.drawLine(160, 200, x, y, BLACK);
 
             // Write SMeter
-
             M5.Lcd.setTextDatum(CC_DATUM);
 
             M5.Lcd.setFreeFont(&rounded_led_board10pt7b);
