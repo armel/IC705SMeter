@@ -129,14 +129,15 @@ void loop()
                 // Write SMeter
                 M5.Lcd.setTextDatum(CC_DATUM);
 
-                M5.Lcd.setFreeFont(&rounded_led_board10pt7b);
+                M5.Lcd.setFreeFont(FSSB18);
                 M5.Lcd.setTextPadding(320);
                 M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
                 M5.Lcd.drawString(sMeterString, 160, 200);
 
-                M5.Lcd.setFreeFont(0);
+                M5.Lcd.setFreeFont(FSS9);
                 M5.Lcd.setTextPadding(0);
-                M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 230);
+                M5.Lcd.setTextColor(TFT_DARKGREY, TFT_WHITE);
+                M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 225);
             }
         }
         delay(25);
