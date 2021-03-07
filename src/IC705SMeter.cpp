@@ -46,8 +46,6 @@ void loop()
 
     char str[12];
    
-    CAT.connect();
-
     for (uint8_t i = 0; i < sizeof(request); i++)
     {
         CAT.write(request[i]);
@@ -74,27 +72,33 @@ void loop()
             sMeterVal0 = atoi(str);
 
             if(sMeterVal0 <= 120) {     // 120 = S9 = 9 * (40/3)
-                sMeterVal1 = sMeterVal0 / (40/3);
+                sMeterVal1 = sMeterVal0 / (40/3.0f);
                 sMeterVal2 = sMeterVal0 - (sMeterVal1 * (40/3));
             }
             else {                      // 240 = S9 + 60 
-                sMeterVal1 = (sMeterVal0 - 120) / 2;
+                sMeterVal1 = (sMeterVal0 - 120) / 2.0f;
                 sMeterVal2 = sMeterVal0 - (sMeterVal1 * 2);
             }
 
             M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
             M5.Lcd.fillRect(120,160,80,59, TFT_WHITE);
 
-            if(sMeterVal0 <= 120) 
+            if(sMeterVal0 <= 106) 
             {
-                angle = 47 - ((47 / 120.0f) * sMeterVal0);
+                angle = map(sMeterVal0, 0, 106, 52, 0); // SMeter image start at S1 so S0 is out of image on the left... (angle 52)
+                //angle = 47 - ((47 / 120.0f) * sMeterVal0);
                 sMeterString = "S" + String(int(round(sMeterVal1)));
             }
             else 
             {
-                angle = -((47 / 120.0f) * (sMeterVal0 - 120));
+                angle = - map(sMeterVal0, 107, 240, 0, 47);
+                //angle = -((47 / 120.0f) * (sMeterVal0 - 120));
                 sMeterString = "S9+" + String(int(round(sMeterVal1))) + "dB";
             }
+
+            Serial.print(sMeterVal1);
+            Serial.print(" ");
+            Serial.println(angle);
 
             // Draw line
 
