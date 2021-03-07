@@ -6,7 +6,7 @@
 #include <font.h>
 #include <image.h>
 
-#define VERSION 0.3
+#define VERSION "0.3"
 #define AUTHOR "F4HWN"
 #define NAME "IC705Meter"
 
