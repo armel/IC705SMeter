@@ -10,22 +10,7 @@ void rotate(float x, float y, float angle) {
     yNew = x * sin(angle) + y * cos(angle);
 }
 
-void setup()
-{
-    Serial.begin(115200);
-
-    M5.begin(true, false, false, false);
-
-    M5.Lcd.setBrightness(32);
-    M5.Lcd.setRotation(1);
-    M5.Lcd.fillScreen(WHITE);
-    
-    M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
-
-    CAT.begin("IC705SMeter");
-}
-
-void loop()
+void getSignal()
 {
     String sMeterString;
 
@@ -134,7 +119,8 @@ void loop()
                 M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
                 M5.Lcd.drawString(sMeterString, 160, 200);
 
-                M5.Lcd.setFreeFont(FSS9);
+                //M5.Lcd.setFreeFont(FSS9);
+                M5.Lcd.setFreeFont(0);
                 M5.Lcd.setTextPadding(0);
                 M5.Lcd.setTextColor(TFT_DARKGREY, TFT_WHITE);
                 M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 225);
@@ -142,4 +128,80 @@ void loop()
         }
         delay(25);
     }
+}
+
+void getFrequency()
+{
+    String frequencyVal0;
+    String frequencyVal1;
+
+    uint16_t counter = 0;
+    uint8_t buffer[1024]; 
+    uint8_t byte1, byte2, byte3;
+
+    uint8_t request[] = {0xFE, 0xFE, 0xA4, IC705_ADDRESS, 0x03, 0xFD};
+
+    char str[12];
+   
+    for (uint8_t i = 0; i < sizeof(request); i++)
+    {
+        CAT.write(request[i]);
+    }
+
+    delay(25);
+
+    while (CAT.available())
+    {
+        byte1 = CAT.read();
+        byte2 = CAT.read();
+
+        if (byte1 == 0xFE && byte2 == 0xFE) {
+            counter = 0;
+            byte3 = CAT.read();
+            while(byte3 != 0xFD) {
+                buffer[counter] = byte3;
+                byte3 = CAT.read();
+                counter++;
+            }
+        }
+        if(counter == 8) {
+            sprintf(str, "%02x%02x%02x%02x%02x", buffer[7], buffer[6], buffer[5], buffer[4], buffer[3]);
+            frequencyVal0 = String(str);
+            frequencyVal1 = "";
+            frequencyVal1 += String(frequencyVal0.substring(0, 4).toInt());
+            frequencyVal1 += ".";
+            frequencyVal1 += frequencyVal0.substring(4, 7);
+            frequencyVal1 += ".";
+            frequencyVal1 += frequencyVal0.substring(7, 10);
+        }
+    }
+
+    // Write SMeter
+    M5.Lcd.setTextDatum(CL_DATUM);
+
+    M5.Lcd.setFreeFont(FSSB9);
+    M5.Lcd.setTextPadding(320);
+    M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
+    M5.Lcd.drawString(frequencyVal1, 160, 150);
+}
+
+void setup()
+{
+    Serial.begin(115200);
+
+    M5.begin(true, false, false, false);
+
+    M5.Lcd.setBrightness(32);
+    M5.Lcd.setRotation(1);
+    M5.Lcd.fillScreen(WHITE);
+    
+    M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
+
+    CAT.begin("IC705SMeter");
+}
+
+void loop()
+{
+    getSignal();
+    getFrequency();
 }
