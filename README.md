@@ -1,6 +1,6 @@
 # IC705SMeter
 
-Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM d'un S-Mètre à aiguille.
+Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM,  d'un S-Mètre à aiguille ! C'est tout ;)
 
 ![IC705SMeter](https://github.com/armel/IC705SMeter/blob/main/img/IC750SMeter.jpeg)
 
@@ -39,4 +39,21 @@ Flash| Memory	16MB|
 
 Coté QSJ, compter autour de 25€. Vous disposez alors d'une plateforme de développement complète, totalement autonome, programmable en C et C++, MicroPython et UIFlow, depuis Linux, Windows ou MacOS, le tout dans un boitier compact et ultra ergonomique.
 
-Ce QSJ est à comparer à celui d'un écran Nextion type NX4832K035, neurasthénique, dépourvu de connectivité Wifi ou GPIO, programmable sous un environnement totalement propriétaire, impliquant un cablage et incapable de fonctionner en standalone. Bref, pour reprendre une des formules du fabriquant, un écran Nextion **_est la meilleure solution pour remplacer les tubes LED classiques Nixie_**. Et nous sommes d'accord, HI ;) 
+
+# Installation
+
+## Pré-ambule
+
+Le plus simple est d'installer [PlateformIO for VSCode](https://platformio.org/install/ide?install=vscode) sur votre PC (Linux ou Windows) ou sur votre Mac (Intel ou M1). C'est un environnement de développement multiplateforme et multilangage performant, en plus d'être agréable à utiliser.
+
+Ensuite, toujours sur votre PC ou Mac, cloner le projet IC705SMeter via la commande :
+
+`https://github.com/armel/IC705SMeter.git`
+
+## Compilation et flashage du M5Stack
+
+Ouvrez le projet IC705SMeter avec PlateformIO for VSCode.
+
+Editer éventuellement le fichier `src/IC705SMeter.h` afin de modifier l'adresse de votre IC705 si nécessaire. J'ai indiqué la valeur par défaut.
+
+Compiler et uploader le projet sur votre M5Stack. C'est terminé.
