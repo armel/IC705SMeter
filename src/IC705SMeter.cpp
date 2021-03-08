@@ -81,10 +81,6 @@ void loop()
                 sMeterVal2 = sMeterVal0 - (sMeterVal1 * 2);
             }
 
-            Serial.print(sMeterVal0);
-            Serial.print(" ");
-            Serial.println(sMeterVal3);
-
             if(abs(sMeterVal0 - sMeterVal3) > 2) {
                 sMeterVal3 = sMeterVal0;
 
@@ -94,19 +90,19 @@ void loop()
                 if(sMeterVal0 <= 120) 
                 {
                     angle = map(sMeterVal0, 0, 120, 52, -5); // SMeter image start at S1 so S0 is out of image on the left... (angle 52)
-                    //angle = 47 - ((47 / 120.0f) * sMeterVal0);
                     sMeterString = "S" + String(int(round(sMeterVal1)));
                 }
                 else 
                 {
                     angle = - map(sMeterVal0, 121, 240, 5, 47);
-                    //angle = -((47 / 120.0f) * (sMeterVal0 - 120));
                     sMeterString = "S9+" + String(int(round(sMeterVal1))) + "dB";
                 }
 
                 Serial.print(sMeterVal0);
                 Serial.print(" ");
                 Serial.print(sMeterVal1);
+                Serial.print(" ");
+                Serial.print(sMeterVal2);
                 Serial.print(" ");
                 Serial.println(angle);
 
