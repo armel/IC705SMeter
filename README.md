@@ -2,7 +2,7 @@
 
 Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM d'un S-Mètre à aiguille.
 
-![IC705SMeter](https://github.com/armel/IC705SMeter/blob/main/img/IC705SMeter.jpeg)
+![IC705SMeter](https://github.com/armel/IC705SMeter/blob/main/img/IC750SMeter.jpeg)
 
 # Architecture technique
 
