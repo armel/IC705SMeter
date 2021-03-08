@@ -130,7 +130,7 @@ void loop()
                 M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
                 M5.Lcd.drawString(sMeterString, 160, 200);
 
-                M5.Lcd.setFreeFont(FSS9);
+                M5.Lcd.setFreeFont(0);
                 M5.Lcd.setTextPadding(0);
                 M5.Lcd.setTextColor(TFT_DARKGREY, TFT_WHITE);
                 M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 225);
