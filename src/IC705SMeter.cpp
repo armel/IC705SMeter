@@ -3,6 +3,7 @@
 
 #include <IC705SMeter.h>
 
+// Manage rotation
 void rotate(float x, float y, float angle) {
     angle = angle * PI/180;
 
@@ -10,11 +11,16 @@ void rotate(float x, float y, float angle) {
     yNew = x * sin(angle) + y * cos(angle);
 }
 
+// Setup
 void setup()
 {
     Serial.begin(115200);
 
     M5.begin(true, false, false, false);
+
+    #if BOARD == CORE2
+        M5.Axp.SetLed(0);
+    #endif
 
     M5.Lcd.setBrightness(32);
     M5.Lcd.setRotation(1);
@@ -25,6 +31,7 @@ void setup()
     CAT.begin("IC705SMeter");
 }
 
+// Main loop
 void loop()
 {
     String sMeterString;
@@ -43,7 +50,7 @@ void loop()
     uint8_t buffer[1024]; 
     uint8_t byte1, byte2, byte3;
 
-    uint8_t request[] = {0xFE, 0xFE, 0xA4, IC705_ADDRESS, 0x15, 0x02, 0xFD};
+    uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x02, 0xFD};
 
     char str[12];
    
@@ -98,6 +105,7 @@ void loop()
                     sMeterString = "S9+" + String(int(round(sMeterVal1))) + "dB";
                 }
 
+                // Debug trace
                 Serial.print(sMeterVal0);
                 Serial.print(" ");
                 Serial.print(sMeterVal1);
@@ -107,7 +115,6 @@ void loop()
                 Serial.println(angle);
 
                 // Draw line
-
                 x = 0;
                 y = 180;
 
