@@ -19,8 +19,11 @@
 #include "BluetoothSerial.h"
 #include <font.h>
 #include <image.h>
+#include "FS.h"
+#include "SPIFFS.h"
+#include <M5StackUpdater.h>
 
-#define VERSION "0.6"
+#define VERSION "0.7"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
@@ -30,3 +33,8 @@ float xNew;
 float yNew;
 
 BluetoothSerial CAT;
+
+// Bin loader
+File root;
+String binFilename[8];
+uint8_t binIndex = 0;
