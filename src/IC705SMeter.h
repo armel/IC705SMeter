@@ -8,6 +8,8 @@
 #define GREY  2
 #define CORE2 3
 
+#define TIMEOUT_BIN_LOADER 3 // 3 sec
+
 #if BOARD == BASIC
   #include <M5Stack.h>
 #elif BOARD == GREY
@@ -23,7 +25,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "0.7"
+#define VERSION "0.8"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 

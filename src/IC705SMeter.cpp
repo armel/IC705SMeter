@@ -57,7 +57,7 @@ void binLoader() {
     M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
     M5.Lcd.setTextDatum(CC_DATUM);
 
-    for (uint8_t i = 50; i > 0; i--) {
+    for (uint8_t i = TIMEOUT_BIN_LOADER * 10; i > 0; i--) {
       M5.update();
 
       if( i % 10 == 0) {
