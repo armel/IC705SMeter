@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 // Board
-#define BOARD GREY
+#define BOARD BASIC
 
 #define BASIC 1
 #define GREY  2
@@ -25,7 +25,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "0.8"
+#define VERSION "0.9"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
