@@ -1,4 +1,16 @@
 # IC705SMeter
+![basic](https://img.shields.io/badge/M5Stack-BASIC-blue)
+![grey](https://img.shields.io/badge/M5Stack-GREY-blue)
+![fire](https://img.shields.io/badge/M5Stack-FIRE-orange)
+![core2](https://img.shields.io/badge/M5Stack-CORE2-green)
+![aws](https://img.shields.io/badge/M5Stack-AWS-orange)
+
+![licence](https://img.shields.io/github/license/armel/IC705SMeter)
+![language](https://img.shields.io/github/languages/top/armel/IC705SMeter)
+![size](https://img.shields.io/github/repo-size/armel/IC705SMeter)
+![version](https://img.shields.io/github/v/release/armel/IC705SMeter)
+![activity](https://img.shields.io/github/commit-activity/y/armel/IC705SMeter)
+
 
 Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM,  d'un S-Mètre à aiguille ! C'est tout ;)
 
