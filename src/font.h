@@ -2,7 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #define GFXFF 1
-#define GLCD  0
+#define GLCD 0
 #define FONT2 2
 #define FONT4 4
 #define FONT6 6
@@ -10,7 +10,7 @@
 #define FONT8 8
 
 // Use M5.Lcd.setFreeFont();
- 
+
 #define TT1 &TomThumb
 
 #define FM9 &FreeMono9pt7b
