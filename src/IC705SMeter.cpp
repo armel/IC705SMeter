@@ -25,15 +25,22 @@ void setup()
   M5.Lcd.setRotation(1);
   M5.Lcd.fillScreen(TFT_BACK);
 
-  M5.Lcd.drawJpg(smeter, sizeof(smeter), 0, 0, 320, 240);
-
-  delay(10000);
+  M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
+  M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
 
   M5.Lcd.setTextDatum(CC_DATUM);
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_DARKGREY);
-  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 235);
+  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 190);
+
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.setFreeFont(FSS12);
+  M5.Lcd.setTextPadding(0);
+  M5.Lcd.setTextColor(TFT_BLACK);
+  M5.Lcd.drawString("PWD", 70, 220);
+  M5.Lcd.drawString("S", 160, 220);
+  M5.Lcd.drawString("SWR", 250, 220);
 
   CAT.begin("IC705SMeter");
 }
@@ -69,11 +76,11 @@ void loop()
   switch (mode)
   {
   case 1:
-    getSmeter(reset);
+    getPower(reset);
     break;
   
   case 2:
-    getPower(reset);
+    getSmeter(reset);
     break;
   
   case 3:
@@ -81,5 +88,5 @@ void loop()
     break;
   }
 
-  delay(100);
+  delay(50);
 }

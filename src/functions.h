@@ -27,35 +27,43 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // Print needle
-void needle(uint16_t x, uint16_t y) 
+void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 100) 
 {
-  Serial.println(x);
-  Serial.println(y);
+  uint16_t x, y;
+
+  x = a;
+  y = b;
+
+  rotate(&x, &y, angle);
   
-  M5.Lcd.drawLine(162, 220, x + 2, y, TFT_NEDDLE_2);
-  M5.Lcd.drawLine(161, 220, x + 1, y, TFT_NEDDLE_1);
-  M5.Lcd.drawLine(160, 220, x, y, TFT_RED);
-  M5.Lcd.drawLine(159, 220, x - 1, y, TFT_NEDDLE_1);
-  M5.Lcd.drawLine(158, 220, x - 2, y, TFT_NEDDLE_2);
+  a = 160 + x;
+  b = 220 - y;
+
+  x = c;
+  y = d;
+
+  rotate(&x, &y, angle);
+  
+  c = 160 + x;
+  d = 220 - y;
+
+  M5.Lcd.drawLine(a + 2, b, c + 2, d, TFT_NEDDLE_2);
+  M5.Lcd.drawLine(a + 1, b, c + 1, d, TFT_NEDDLE_1);
+  M5.Lcd.drawLine(a, b, c, d, TFT_RED);
+  M5.Lcd.drawLine(a - 1, b, c - 1, d, TFT_NEDDLE_1);
+  M5.Lcd.drawLine(a - 2, b, c - 2, d, TFT_NEDDLE_2);
 }
 
 // Print value
 void value(String valString) 
 {
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(FF23);
-  M5.Lcd.setTextPadding(0);
-  M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
-  M5.Lcd.drawString("        ", 160, 200);
-  M5.Lcd.drawString("        ", 160, 210);
-  M5.Lcd.setTextPadding(320);
-  M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString(valString, 160, 210);
+  //M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
 
-  M5.Lcd.setFreeFont(0);
-  M5.Lcd.setTextPadding(0);
-  M5.Lcd.setTextColor(TFT_DARKGREY);
-  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 235);
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.setFreeFont(FSSB12);
+  M5.Lcd.setTextPadding(160);
+  M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
+  M5.Lcd.drawString(valString, 160, 170);
 }
 
 // List files on SPIFFS
@@ -218,10 +226,7 @@ void getSmeter(boolean reset)
 
   float_t angle = 0;
 
-  uint16_t x = 0;
-  uint16_t y = 0;
   uint16_t counter = 0;
-
   char str[12];
 
   for (uint8_t i = 0; i < sizeof(request); i++)
@@ -268,8 +273,7 @@ void getSmeter(boolean reset)
       {
         val3 = val0;
 
-        M5.Lcd.drawJpg(smeter, sizeof(smeter), 0, 0, 320, 240);
-        //M5.Lcd.fillRect(0, 120, 320, 110, TFT_WHITE);
+        M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
         if (val0 <= 120)
         {
@@ -292,15 +296,7 @@ void getSmeter(boolean reset)
         Serial.println(angle);
 
         // Draw line
-        x = 0;
-        y = 200;
-
-        rotate(&x, &y, angle);
-
-        x = 160 + x;
-        y = 220 - y;
-
-        needle(x, y);
+        needle(angle);
 
         // Write Value
         value(valString);
@@ -320,9 +316,6 @@ void getSWR(boolean reset)
   static uint8_t val3 = 0;
 
   float_t angle = 0;
-
-  uint16_t x = 0;
-  uint16_t y = 0;
 
   uint16_t counter = 0;
   uint8_t buffer[1024];
@@ -369,8 +362,7 @@ void getSWR(boolean reset)
       {
         val3 = val0;
 
-        M5.Lcd.drawJpg(smeter, sizeof(smeter), 0, 0, 320, 240);
-        //M5.Lcd.fillRect(0, 120, 320, 110, TFT_WHITE);
+        M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
         if (val0 <= 48)
         {
@@ -418,15 +410,7 @@ void getSWR(boolean reset)
         Serial.println(angle);
 
         // Draw line
-        x = 0;
-        y = 200;
-
-        rotate(&x, &y, angle);
-
-        x = 160 + x;
-        y = 220 - y;
-
-        needle(x, y);
+        needle(angle);
 
         // Write Value
         value(valString);
@@ -447,9 +431,6 @@ void getPower(boolean reset)
   static uint8_t val3 = 0;
 
   float_t angle = 0;
-
-  uint16_t x = 0;
-  uint16_t y = 0;
 
   uint16_t counter = 0;
   uint8_t buffer[1024];
@@ -496,8 +477,7 @@ void getPower(boolean reset)
       {
         val3 = val0;
 
-        M5.Lcd.drawJpg(smeter, sizeof(smeter), 0, 0, 320, 240);
-        //M5.Lcd.fillRect(0, 120, 320, 110, TFT_WHITE);
+        M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
         if (val0 <= 13)
         {
@@ -531,7 +511,7 @@ void getPower(boolean reset)
         }
 
         val2 = round(val1 * 10);
-        valString = "PWR " + String((val2/10)) + " Watts";
+        valString = "PWR " + String((val2/10)) + " W";
 
         // Debug trace
         /*
@@ -543,15 +523,7 @@ void getPower(boolean reset)
         */
 
         // Draw line
-        x = 0;
-        y = 200;
-
-        rotate(&x, &y, angle);
-
-        x = 160 + x;
-        y = 220 - y;
-
-        needle(x, y);
+        needle(angle);
 
         // Write Value
         value(valString);
@@ -571,9 +543,6 @@ void getDebug(boolean reset)
   static uint8_t val3 = 0;
 
   float_t angle = 0;
-
-  uint16_t x = 0;
-  uint16_t y = 0;
 
   uint8_t btnA;
   uint8_t btnC; 
@@ -610,8 +579,7 @@ void getDebug(boolean reset)
     {
       val3 = val0;
 
-      M5.Lcd.drawJpg(smeter, sizeof(smeter), 0, 0, 320, 240);
-      //M5.Lcd.fillRect(0, 120, 320, 120, TFT_WHITE);
+      M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
       if (val0 <= 120)
       {
@@ -634,15 +602,7 @@ void getDebug(boolean reset)
       Serial.println(angle);
 
       // Draw line
-      x = 0;
-      y = 200;
-
-      rotate(&x, &y, angle);
-
-      x = 160 + x;
-      y = 220 - y;
-
-      needle(x, y);
+      needle(angle);
 
       // Write Value
       value(valString);
