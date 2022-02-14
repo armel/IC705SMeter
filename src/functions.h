@@ -211,7 +211,7 @@ void binLoader()
 }
 
 // Get Smeter
-void getSmeter(boolean reset)
+void getSmeter()
 {
   String valString;
 
@@ -269,9 +269,10 @@ void getSmeter(boolean reset)
         val2 = val0 - (val1 * 2);
       }
 
-      if (abs(val0 - val3) > 2 || reset == true)
+      if (abs(val0 - val3) > 1 || reset == true)
       {
         val3 = val0;
+        reset = false;
 
         M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
@@ -307,7 +308,7 @@ void getSmeter(boolean reset)
 }
 
 // Get SWR
-void getSWR(boolean reset)
+void getSWR()
 {
   String valString;
 
@@ -324,10 +325,6 @@ void getSWR(boolean reset)
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x12, 0xFD};
 
   char str[12];
-
-  if(reset == true) {
-    val3 = 0;
-  }
 
   for (uint8_t i = 0; i < sizeof(request); i++)
   {
@@ -358,9 +355,10 @@ void getSWR(boolean reset)
       sprintf(str, "%02x%02x", buffer[4], buffer[5]);
       val0 = atoi(str);
 
-      if (abs(val0 - val3) > 2 || reset == true)
+      if (val0 != val3 || reset == true)
       {
         val3 = val0;
+        reset = false;
 
         M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
@@ -421,7 +419,7 @@ void getSWR(boolean reset)
 }
 
 // Get Power
-void getPower(boolean reset)
+void getPower()
 {
   String valString;
 
@@ -439,10 +437,6 @@ void getPower(boolean reset)
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x14, 0x0A, 0xFD};
 
   char str[12];
-
-  if(reset == true) {
-    val3 = 0;
-  }
 
   for (uint8_t i = 0; i < sizeof(request); i++)
   {
@@ -473,9 +467,10 @@ void getPower(boolean reset)
       sprintf(str, "%02x%02x", buffer[4], buffer[5]);
       val0 = atoi(str);
 
-      if (abs(val0 - val3) > 2 || reset == true)
+      if (val0 != val3 || reset == true)
       {
         val3 = val0;
+        reset = false;
 
         M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
@@ -533,7 +528,7 @@ void getPower(boolean reset)
   }
 }
 
-void getDebug(boolean reset)
+void getDebug()
 {
   String valString;
 
@@ -578,6 +573,7 @@ void getDebug(boolean reset)
     if (abs(val0 - val3) > 2 || reset == true)
     {
       val3 = val0;
+      reset = false;
 
       M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 

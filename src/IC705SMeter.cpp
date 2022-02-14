@@ -48,7 +48,6 @@ void setup()
 // Main loop
 void loop()
 {
-  boolean reset = false;
   uint8_t btnA;
   uint8_t btnB; 
   uint8_t btnC;
@@ -76,15 +75,15 @@ void loop()
   switch (mode)
   {
   case 1:
-    getPower(reset);
+    getPower();
     break;
   
   case 2:
-    getSmeter(reset);
+    getSmeter();
     break;
   
   case 3:
-    getSWR(reset);
+    getSWR();
     break;
   }
 

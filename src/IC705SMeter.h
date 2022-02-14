@@ -38,6 +38,9 @@
 // Bluetooth connector
 BluetoothSerial CAT;
 
+// Reset
+boolean reset = true;
+
 // Bin loader
 File root;
 String binFilename[8];
