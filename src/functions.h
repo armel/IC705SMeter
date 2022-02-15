@@ -63,7 +63,7 @@ void value(String valString)
     valStringOld = valString;
 
     M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(&stencilie16pt7b);
+    M5.Lcd.setFreeFont(&robosapien14pt7b);
     M5.Lcd.setTextPadding(180);
     M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
     valString.replace(".", ",");
@@ -289,7 +289,7 @@ void getSmeter()
         else
         {
           angle = mapFloat(val0, 121, 241, -6.50f, -43.0f);
-          valString = "S 9 + " + String(int(round(val1))) + " DB";
+          valString = "S 9 + " + String(int(round(val1))) + " dB";
         }
 
         // Debug trace
