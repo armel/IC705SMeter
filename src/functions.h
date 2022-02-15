@@ -65,7 +65,7 @@ void value(String valString)
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.setFreeFont(&robosapien14pt7b);
     M5.Lcd.setTextPadding(180);
-    M5.Lcd.setTextColor(TFT_BACK, TFT_BLACK);
+    M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
     //valString.replace(".", ",");
     M5.Lcd.drawString(valString, 160, 170);
   }
