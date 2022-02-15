@@ -60,7 +60,7 @@ void value(String valString)
   //M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
 
   M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(FSSB12);
+  M5.Lcd.setFreeFont(&pf_tempesta_seven_bold8pt7b);
   M5.Lcd.setTextPadding(160);
   M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
   M5.Lcd.drawString(valString, 160, 170);
