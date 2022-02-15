@@ -35,7 +35,7 @@ void setup()
   M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 190);
 
   M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&pf_tempesta_seven_bold8pt7b);
+  M5.Lcd.setFreeFont(&stencilie16pt7b);
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
   M5.Lcd.drawString("PWD", 70, 220);

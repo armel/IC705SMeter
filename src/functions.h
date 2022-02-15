@@ -57,13 +57,18 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
 // Print value
 void value(String valString) 
 {
-  //M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
+  String valStringOld;
 
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&pf_tempesta_seven_bold8pt7b);
-  M5.Lcd.setTextPadding(160);
-  M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
-  M5.Lcd.drawString(valString, 160, 170);
+  if(valString != valStringOld) {
+    valStringOld = valString;
+
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(&stencilie16pt7b);
+    M5.Lcd.setTextPadding(180);
+    M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
+    valString.replace(".", ",");
+    M5.Lcd.drawString(valString, 160, 170);
+  }
 }
 
 // List files on SPIFFS
@@ -284,7 +289,7 @@ void getSmeter()
         else
         {
           angle = mapFloat(val0, 121, 241, -6.50f, -43.0f);
-          valString = "S 9 + " + String(int(round(val1))) + " dB";
+          valString = "S 9 + " + String(int(round(val1))) + " DB";
         }
 
         // Debug trace
