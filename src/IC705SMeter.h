@@ -1,8 +1,7 @@
 // Copyright (c) F4HWN Armel. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-// Board
-#define BOARD BASIC
+#include "settings.h"
 
 #define BASIC 1
 #define GREY 2
@@ -12,12 +11,17 @@
 
 #if BOARD == BASIC
   #include <M5Stack.h>
+  #include "WebIndexBasicAndGrey.h"
 #elif BOARD == GREY
   #include <M5Stack.h>
+  #include "WebIndexBasicAndGrey.h"
 #elif BOARD == CORE2
   #include <M5Core2.h>
+  #include "WebIndexCore2.h"
 #endif
 
+#include <WiFiClientSecure.h>
+#include <HTTPClient.h>
 #include "BluetoothSerial.h"
 #include <font.h>
 #include <image.h>
@@ -29,8 +33,7 @@
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
-#define IC705_CI_V_ADDRESS 0xA4 // IC705 CI-V default address 0xA4
-
+// Needle
 #define TFT_BACK M5.Lcd.color565(255, 248, 236)
 #define TFT_NEDDLE_1 M5.Lcd.color565(241, 120, 100)
 #define TFT_NEDDLE_2 M5.Lcd.color565(241, 170, 170)
@@ -38,13 +41,28 @@
 // Bluetooth connector
 BluetoothSerial CAT;
 
-// Reset
+// Global Variables
+WiFiServer httpServer(80);
+WiFiClient httpClient;
+uint8_t htmlGetRequest;
+uint8_t htmlGetRefresh = 3;
 boolean reset = true;
+
+// Web site Screen Capture stuff
+#define GET_unknown 0
+#define GET_index_page  1
+#define GET_screenshot  2
+
+// Flags for button presses via Web site Screen Capture
+bool buttonLeftPressed = false;
+bool buttonCenterPressed = false;
+bool buttonRightPressed = false;
 
 // Bin loader
 File root;
 String binFilename[8];
 uint8_t binIndex = 0;
 
+// Optimize SPI Speed
 #undef SPI_READ_FREQUENCY
 #define SPI_READ_FREQUENCY 40000000

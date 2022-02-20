@@ -27,7 +27,7 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // Print needle
-void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 100) 
+void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 100)
 {
   uint16_t x, y;
 
@@ -35,7 +35,7 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
   y = b;
 
   rotate(&x, &y, angle);
-  
+
   a = 160 + x;
   b = 220 - y;
 
@@ -43,7 +43,7 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
   y = d;
 
   rotate(&x, &y, angle);
-  
+
   c = 160 + x;
   d = 220 - y;
 
@@ -55,18 +55,19 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
 }
 
 // Print value
-void value(String valString) 
+void value(String valString)
 {
   String valStringOld;
 
-  if(valString != valStringOld) {
+  if (valString != valStringOld)
+  {
     valStringOld = valString;
 
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.setFreeFont(&robosapien14pt7b);
     M5.Lcd.setTextPadding(180);
     M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
-    //valString.replace(".", ",");
+    // valString.replace(".", ",");
     M5.Lcd.drawString(valString, 160, 170);
   }
 }
@@ -511,7 +512,7 @@ void getPower()
         }
 
         val2 = round(val1 * 10);
-        valString = "PWR " + String((val2/10)) + " W";
+        valString = "PWR " + String((val2 / 10)) + " W";
 
         // Debug trace
         /*
@@ -545,7 +546,7 @@ void getDebug()
   float_t angle = 0;
 
   uint8_t btnA;
-  uint8_t btnC; 
+  uint8_t btnC;
 
   while (true)
   {
@@ -553,11 +554,13 @@ void getDebug()
     btnA = M5.BtnA.read();
     btnC = M5.BtnC.read();
 
-    if(btnA == 1) {
+    if (btnA == 1)
+    {
       val0 -= 1;
       btnA = 0;
     }
-    if(btnC == 1) {
+    if (btnC == 1)
+    {
       val0 += 1;
       btnC = 0;
     }
@@ -607,6 +610,197 @@ void getDebug()
 
       // Write Value
       value(valString);
+    }
+  }
+}
+
+bool M5Screen24bmp()
+{
+  uint16_t image_height = M5.Lcd.height();
+  uint16_t image_width = M5.Lcd.width();
+  const uint16_t pad = (4 - (3 * image_width) % 4) % 4;
+  uint32_t filesize = 54 + (3 * image_width + pad) * image_height;
+  unsigned char swap;
+  unsigned char line_data[image_width * 3 + pad];
+  unsigned char header[54] = {
+      'B', 'M',    // BMP signature (Windows 3.1x, 95, NT, …)
+      0, 0, 0, 0,  // Image file size in bytes
+      0, 0, 0, 0,  // Reserved
+      54, 0, 0, 0, // Start of pixel array
+      40, 0, 0, 0, // Info header size
+      0, 0, 0, 0,  // Image width
+      0, 0, 0, 0,  // Image height
+      1, 0,        // Number of color planes
+      24, 0,       // Bits per pixel
+      0, 0, 0, 0,  // Compression
+      0, 0, 0, 0,  // Image size (can be 0 for uncompressed images)
+      0, 0, 0, 0,  // Horizontal resolution (dpm)
+      0, 0, 0, 0,  // Vertical resolution (dpm)
+      0, 0, 0, 0,  // Colors in color table (0 = none)
+      0, 0, 0, 0}; // Important color count (0 = all colors are important)
+
+  // Fill filesize, width and heigth in the header array
+  for (uint8_t i = 0; i < 4; i++)
+  {
+    header[2 + i] = (char)((filesize >> (8 * i)) & 255);
+    header[18 + i] = (char)((image_width >> (8 * i)) & 255);
+    header[22 + i] = (char)((image_height >> (8 * i)) & 255);
+  }
+  // Write the header to the file
+  httpClient.write(header, 54);
+
+  // To keep the required memory low, the image is captured line by line
+  // initialize padded pixel with 0
+  for (uint16_t i = (image_width - 1) * 3; i < (image_width * 3 + pad); i++)
+  {
+    line_data[i] = 0;
+  }
+  // The coordinate origin of a BMP image is at the bottom left.
+  // Therefore, the image must be read from bottom to top.
+  for (uint16_t y = image_height; y > 0; y--)
+  {
+    // Get one line of the screen content
+    M5.Lcd.readRectRGB(0, y - 1, image_width, 1, line_data);
+    // BMP color order is: Blue, Green, Red
+    // Return values from readRectRGB is: Red, Green, Blue
+    // Therefore: R und B need to be swapped
+    for (uint16_t x = 0; x < image_width; x++)
+    {
+      swap = line_data[x * 3];
+      line_data[x * 3] = line_data[x * 3 + 2];
+      line_data[x * 3 + 2] = swap;
+    }
+    // Write the line to the file
+    httpClient.write(line_data, (image_width * 3) + pad);
+  }
+  return true;
+}
+
+// Get screenshot
+void getScreenshot()
+{
+  unsigned long timeout_millis = millis() + 3000;
+  String currentLine = "";
+
+  httpClient = httpServer.available();
+
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    // httpClient.setNoDelay(1);
+    if (httpClient)
+    {
+      // Force a disconnect after 3 seconds
+      // Serial.println("New Client.");
+      // Loop while the client's connected
+      while (httpClient.connected())
+      {
+        // If the client is still connected after 3 seconds,
+        // Something is wrong. So kill the connection
+        if (millis() > timeout_millis)
+        {
+          // Serial.println("Force Client stop!");
+          httpClient.stop();
+        }
+        // If there's bytes to read from the client,
+        if (httpClient.available())
+        {
+          char c = httpClient.read();
+          Serial.write(c);
+          // If the byte is a newline character
+          if (c == '\n')
+          {
+            // Two newline characters in a row (empty line) are indicating
+            // The end of the client HTTP request, so send a response:
+            if (currentLine.length() == 0)
+            {
+              // HTTP headers always start with a response code (e.g. HTTP/1.1 200 OK)
+              // and a content-type so the client knows what's coming, then a blank line,
+              // followed by the content:
+              switch (htmlGetRequest)
+              {
+              case GET_index_page:
+              {
+                httpClient.println("HTTP/1.1 200 OK");
+                httpClient.println("Content-type:text/html");
+                httpClient.println();
+                httpClient.write_P(index_html, sizeof(index_html));
+                break;
+              }
+              case GET_screenshot:
+              {
+                httpClient.println("HTTP/1.1 200 OK");
+                httpClient.println("Content-type:image/bmp");
+                httpClient.println();
+                M5Screen24bmp();
+                break;
+              }
+              default:
+                httpClient.println("HTTP/1.1 404 Not Found");
+                httpClient.println("Content-type:text/html");
+                httpClient.println();
+                httpClient.print("404 Page not found.<br>");
+                break;
+              }
+              // The HTTP response ends with another blank line:
+              // httpClient.println();
+              // Break out of the while loop:
+              break;
+            }
+            else
+            { // if a newline is found
+              // Analyze the currentLine:
+              // detect the specific GET requests:
+              if (currentLine.startsWith("GET /"))
+              {
+                htmlGetRequest = GET_unknown;
+                // If no specific target is requested
+                if (currentLine.startsWith("GET / "))
+                {
+                  htmlGetRefresh = 3;
+                  htmlGetRequest = GET_index_page;
+                }
+                // If the screenshot image is requested
+                if (currentLine.startsWith("GET /screenshot.bmp"))
+                {
+                  htmlGetRefresh = 3;
+                  htmlGetRequest = GET_screenshot;
+                }
+                // If the button left was pressed on the HTML page
+                if (currentLine.startsWith("GET /buttonLeft"))
+                {
+                  buttonLeftPressed = true;
+                  htmlGetRefresh = 1;
+                  htmlGetRequest = GET_index_page;
+                }
+                // If the button center was pressed on the HTML page
+                if (currentLine.startsWith("GET /buttonCenter"))
+                {
+                  buttonCenterPressed = true;
+                  htmlGetRefresh = 1;
+                  htmlGetRequest = GET_index_page;
+                }
+                // If the button right was pressed on the HTML page
+                if (currentLine.startsWith("GET /buttonRight"))
+                {
+                  buttonRightPressed = true;
+                  htmlGetRefresh = 1;
+                  htmlGetRequest = GET_index_page;
+                }
+              }
+              currentLine = "";
+            }
+          }
+          else if (c != '\r')
+          {
+            // Add anything else than a carriage return
+            // character to the currentLine
+            currentLine += c;
+          }
+        }
+      }
+      // Close the connection
+      httpClient.stop();
+      // Serial.println("Client Disconnected.");
     }
   }
 }

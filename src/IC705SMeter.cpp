@@ -16,6 +16,16 @@ void setup()
   // Bin Loader
   binLoader();
 
+  // Wifi
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+  }
+
+  // Start server (for Web site Screen Capture)
+  httpServer.begin();     
+
   // Let's go
   #if BOARD == CORE2
   M5.Axp.SetLed(0);
@@ -33,6 +43,7 @@ void setup()
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
   M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 195);
+  M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 205);
 
   M5.Lcd.setTextDatum(CC_DATUM);
   M5.Lcd.setFreeFont(&robosapien14pt7b);
@@ -59,17 +70,20 @@ void loop()
   btnB = M5.BtnB.read();
   btnC = M5.BtnC.read();
 
-  if(btnA == 1) {
+  if(btnA == 1 || buttonLeftPressed == 1) {
     mode = 1;
     reset = true;
+    buttonLeftPressed = 0;
   }
-  else if(btnB == 1) {
+  else if(btnB == 1 || buttonCenterPressed == 1) {
     mode = 2;
     reset = true;
+    buttonCenterPressed = 0;
   }
-  else if(btnC == 1) {
+  else if(btnC == 1 || buttonRightPressed == 1) {
     mode = 3;
     reset = true;
+    buttonRightPressed = 0;
   }
 
   switch (mode)
@@ -85,6 +99,11 @@ void loop()
   case 3:
     getSWR();
     break;
+  }
+
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    getScreenshot();
   }
 
   delay(50);
