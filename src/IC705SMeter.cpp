@@ -46,7 +46,7 @@ void setup()
   M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 205);
 
   M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&robosapien14pt7b);
+  M5.Lcd.setFreeFont(&stencilie16pt7b);
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
   M5.Lcd.drawString("PWD", 70, 220);
