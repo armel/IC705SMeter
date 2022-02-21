@@ -2,280 +2,127 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 #include <IC705SMeter.h>
-
-// Manage rotation
-void rotate(float x, float y, float angle) {
-    angle = angle * PI/180;
-
-    xNew = x * cos(angle) - y * sin(angle);
-    yNew = x * sin(angle) + y * cos(angle);
-}
-
-// List files on SPIFFS
-void getBinaryList(File dir)
-{
-  while (true) {
-    File entry =  dir.openNextFile();
-    if (!entry) {
-      // no more files
-      break;
-    }
-
-    if(strstr(entry.name(), "/.") == NULL && strstr(entry.name(), ".bin") != NULL) {
-      binFilename[binIndex] = entry.name();
-      binIndex++;
-    }
-
-    if (entry.isDirectory() && strstr(entry.name(), "/.") == NULL) {
-      getBinaryList(entry);
-    }
-
-    entry.close();
-  }
-}
-
-// Bin Loader
-void binLoader() {
-  boolean click = 0;
-  int8_t cursor = 0;
-  int8_t change = 255;
-  String tmpName;
-
-  if(!SPIFFS.begin())
-  {
-    Serial.println("SPIFFS Mount Failed");
-
-    M5.Lcd.setTextFont(1);
-    M5.Lcd.setTextSize(2);
-
-    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.drawString("Flash File System", 160, 20);
-    M5.Lcd.drawString("needs to be formated.", 160, 50);
-    M5.Lcd.drawString("It takes around 4 minutes.", 160, 100);
-    M5.Lcd.drawString("Please, wait until ", 160, 150);
-    M5.Lcd.drawString("the application starts !", 160, 180);
-
-    Serial.println("SPIFFS Formating...");
-
-    SPIFFS.format();    // Format SPIFFS...
-
-    M5.Lcd.setTextFont(0);
-    M5.Lcd.setTextSize(0);
-
-    return;
-  }
-  
-  root = SPIFFS.open("/");
-  getBinaryList(root);
-
-  if(binIndex != 0) {
-    M5.Lcd.setTextFont(1);
-    M5.Lcd.setTextSize(1);
-
-    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Lcd.setTextDatum(CC_DATUM);
-
-    for (uint8_t i = TIMEOUT_BIN_LOADER * 10; i > 0; i--) {
-      M5.update();
-
-      if( i % 10 == 0) {
-        tmpName += ".";
-        M5.Lcd.drawString(tmpName, 160, 20);
-      }
-
-      if(M5.BtnA.wasPressed() || M5.BtnC.wasPressed()) {
-        return;
-      }
-      else if(M5.BtnB.wasPressed()) {
-        click = 1;
-        break;
-      }
-
-      vTaskDelay(100);
-    }
-  }
-
-  while(click == 1) {
-    M5.Lcd.setTextFont(1);
-    M5.Lcd.setTextSize(2);
-
-    M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.drawString("Bin Loader", 160, 20);
-
-    M5.update();
-
-    if(M5.BtnA.wasPressed()) {
-      cursor--;
-    }
-    else if(M5.BtnC.wasPressed()) {
-      cursor++;
-    }
-    else if(M5.BtnB.wasPressed()) {
-      updateFromFS(SPIFFS, binFilename[cursor]);
-      ESP.restart(); 
-    }
-
-    cursor = (cursor < 0) ? binIndex - 1 : cursor;
-    cursor = (cursor > binIndex - 1) ? 0 : cursor;
-
-    if(change != cursor) {
-      change = cursor;
-      M5.Lcd.setTextPadding(320);
-
-      for(uint8_t i = 0; i < binIndex; i++) {
-        tmpName = binFilename[i].substring(1);
-
-        if (cursor == i) {
-          tmpName = ">> " + tmpName + " <<";
-        }
-        
-        M5.Lcd.drawString(tmpName, 160, 60 + i * 20);
-      }
-    }
-    vTaskDelay(100);
-  }
-}
+#include "functions.h"
 
 // Setup
 void setup()
 {
-    // Debug
-    Serial.begin(115200);
+  uint8_t loop = 0;
 
-    // Init M5
-    M5.begin(true, false, false, false);
+  // Debug
+  Serial.begin(115200);
 
-    // Bin Loader
-    binLoader();
+  // Init M5
+  M5.begin(true, false, false, false);
 
-    // Let's go
-    #if BOARD == CORE2
-        M5.Axp.SetLed(0);
-    #endif
+  // Bin Loader
+  binLoader();
 
-    M5.Lcd.setBrightness(32);
-    M5.Lcd.setRotation(1);
-    M5.Lcd.fillScreen(WHITE);
-    
-    M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
+  // Wifi
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED && loop <= 10)
+  {
+    delay(250);
+    loop += 1;
+  }
 
-    CAT.begin("IC705SMeter");
+  // Start server (for Web site Screen Capture)
+  httpServer.begin();     
+
+  // Let's go
+  #if BOARD == CORE2
+  M5.Axp.SetLed(0);
+  #endif
+
+  M5.Lcd.setBrightness(64);
+  M5.Lcd.setRotation(1);
+  M5.Lcd.fillScreen(TFT_BACK);
+
+  M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
+  M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
+
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.setFreeFont(0);
+  M5.Lcd.setTextPadding(0);
+  M5.Lcd.setTextColor(TFT_BLACK);
+  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 195);
+
+  if(WiFi.status() == WL_CONNECTED) {
+    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 205);
+  }
+
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.setFreeFont(&stencilie16pt7b);
+  M5.Lcd.setTextPadding(0);
+  M5.Lcd.setTextColor(TFT_BLACK);
+  M5.Lcd.drawString("PWD", 70, 220);
+  M5.Lcd.drawString("S", 160, 220);
+  M5.Lcd.drawString("SWR", 250, 220);
+
+  CAT.register_callback(callbackBT);
+ 
+  if(!CAT.begin(NAME)){
+    Serial.println("An error occurred initializing Bluetooth");
+  }else{
+    Serial.println("Bluetooth initialized");
+  }
 }
 
 // Main loop
 void loop()
 {
-    String sMeterString;
+  uint8_t btnA;
+  uint8_t btnB; 
+  uint8_t btnC;
+  static uint8_t mode = 2;
 
-    uint8_t sMeterVal0 = 0;
-    float_t sMeterVal1 = 0;  
-    float_t sMeterVal2 = 0;
-    static uint8_t sMeterVal3 = -1;
+  if (btConnected == false) {
+    value("Need Pairing");
+  }
 
-    float_t angle = 0;
+  M5.update();
 
-    uint16_t x = 0;
-    uint16_t y = 0;
+  btnA = M5.BtnA.read();
+  btnB = M5.BtnB.read();
+  btnC = M5.BtnC.read();
 
-    uint16_t counter = 0;
-    uint8_t buffer[1024]; 
-    uint8_t byte1, byte2, byte3;
+  if(btnA == 1 || buttonLeftPressed == 1) {
+    mode = 1;
+    reset = true;
+    buttonLeftPressed = 0;
+  }
+  else if(btnB == 1 || buttonCenterPressed == 1) {
+    mode = 2;
+    reset = true;
+    buttonCenterPressed = 0;
+  }
+  else if(btnC == 1 || buttonRightPressed == 1) {
+    mode = 3;
+    reset = true;
+    buttonRightPressed = 0;
+  }
 
-    uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x02, 0xFD};
-
-    char str[12];
-   
-    for (uint8_t i = 0; i < sizeof(request); i++)
+  if (btConnected == true) {
+    switch (mode)
     {
-        CAT.write(request[i]);
+    case 1:
+      getPower();
+      break;
+    
+    case 2:
+      getSmeter();
+      break;
+    
+    case 3:
+      getSWR();
+      break;
     }
+  }
 
-    delay(25);
+  if (WiFi.status() == WL_CONNECTED)
+  {
+    getScreenshot();
+  }
 
-    while (CAT.available())
-    {
-        byte1 = CAT.read();
-        byte2 = CAT.read();
-
-        if (byte1 == 0xFE && byte2 == 0xFE) {
-            counter = 0;
-            byte3 = CAT.read();
-            while(byte3 != 0xFD) {
-                buffer[counter] = byte3;
-                byte3 = CAT.read();
-                counter++;
-            }
-        }
-        if(counter == 6) {
-            sprintf(str, "%02x%02x", buffer[4], buffer[5]);
-            sMeterVal0 = atoi(str);
-
-            if(sMeterVal0 <= 120) {     // 120 = S9 = 9 * (40/3)
-                sMeterVal1 = sMeterVal0 / (40/3.0f);
-                sMeterVal2 = sMeterVal0 - (sMeterVal1 * (40/3));
-            }
-            else {                      // 240 = S9 + 60 
-                sMeterVal1 = (sMeterVal0 - 120) / 2.0f;
-                sMeterVal2 = sMeterVal0 - (sMeterVal1 * 2);
-            }
-
-            if(abs(sMeterVal0 - sMeterVal3) > 2) {
-                sMeterVal3 = sMeterVal0;
-
-                M5.Lcd.drawBitmap(0,0,320, 183, (uint16_t *)SMETER01);
-                M5.Lcd.fillRect(120,160,80,59, TFT_WHITE);
-
-                if(sMeterVal0 <= 120) 
-                {
-                    angle = map(sMeterVal0, 0, 120, 52, -5); // SMeter image start at S1 so S0 is out of image on the left... (angle 52)
-                    sMeterString = "S" + String(int(round(sMeterVal1)));
-                }
-                else 
-                {
-                    angle = - map(sMeterVal0, 121, 240, 5, 47);
-                    sMeterString = "S9+" + String(int(round(sMeterVal1))) + "dB";
-                }
-
-                // Debug trace
-                Serial.print(sMeterVal0);
-                Serial.print(" ");
-                Serial.print(sMeterVal1);
-                Serial.print(" ");
-                Serial.print(sMeterVal2);
-                Serial.print(" ");
-                Serial.println(angle);
-
-                // Draw line
-                x = 0;
-                y = 180;
-
-                rotate(x, y, angle);
-
-                x = 160 + int(xNew);
-                y = 200 - int(yNew);
-
-                M5.Lcd.drawLine(162, 200, x, y, TFT_DARKGREY);
-                M5.Lcd.drawLine(161, 200, x, y, TFT_BLACK);
-                M5.Lcd.drawLine(160, 200, x, y, TFT_BLACK);
-                M5.Lcd.drawLine(159, 200, x, y, TFT_BLACK);
-                M5.Lcd.drawLine(158, 200, x, y, TFT_DARKGREY);
-
-                // Write SMeter
-                M5.Lcd.setTextDatum(CC_DATUM);
-
-                M5.Lcd.setFreeFont(FSSB18);
-                M5.Lcd.setTextPadding(320);
-                M5.Lcd.setTextColor(TFT_BLACK, TFT_WHITE);
-                M5.Lcd.drawString(sMeterString, 160, 200);
-
-                M5.Lcd.setFreeFont(0);
-                M5.Lcd.setTextPadding(0);
-                M5.Lcd.setTextColor(TFT_DARKGREY, TFT_WHITE);
-                M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 225);
-            }
-        }
-        delay(25);
-    }
+  delay(50);
 }
