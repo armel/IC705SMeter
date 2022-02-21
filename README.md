@@ -125,3 +125,19 @@ Cela revient à changer la plate-forme cible, le point-virgule étant un comment
 ## Compilation et flashage du M5Stack
 
 Compiler et uploader le projet sur votre M5Stack. C'est terminé.
+
+# Utilisation
+
+Une fois lancé, vous devez connecter votre IC705 à votre M5Stack via le menu (SET/Bluetooth Set) de votre transceiver. Référez vous à la documentation, si besoin.
+
+A l'aide des boutons, vous pouvez changer de mesure :
+
+- gauche : puissance RF ou PWD
+- milieu : signal S
+- droite : SWR
+
+> Attention : la mesure du SWR est fiable jusqu'à 3. Au dela, la documentation fournie par Icom est trop vague...
+
+
+
+
