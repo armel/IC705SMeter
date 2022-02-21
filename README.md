@@ -137,7 +137,3 @@ A l'aide des boutons, vous pouvez changer de mesure :
 - droite : SWR
 
 > Attention : la mesure du SWR est fiable jusqu'à 3. Au dela, la documentation fournie par Icom est trop vague...
-
-
-
-
