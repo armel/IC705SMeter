@@ -132,7 +132,7 @@ Une fois lancé, vous devez connecter votre IC705 à votre M5Stack via le menu (
 
 A l'aide des boutons, vous pouvez changer de mesure :
 
-- gauche : puissance RF ou PWD
+- gauche : puissance RF ou PWR
 - milieu : signal S
 - droite : SWR
 
