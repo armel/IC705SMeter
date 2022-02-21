@@ -7,6 +7,8 @@
 // Setup
 void setup()
 {
+  uint8_t loop = 0;
+
   // Debug
   Serial.begin(115200);
 
@@ -18,9 +20,10 @@ void setup()
 
   // Wifi
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED)
+  while (WiFi.status() != WL_CONNECTED && loop <= 10)
   {
-    delay(500);
+    delay(250);
+    loop += 1;
   }
 
   // Start server (for Web site Screen Capture)
@@ -43,7 +46,10 @@ void setup()
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
   M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 195);
-  M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 205);
+
+  if(WiFi.status() == WL_CONNECTED) {
+    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 205);
+  }
 
   M5.Lcd.setTextDatum(CC_DATUM);
   M5.Lcd.setFreeFont(&stencilie16pt7b);
@@ -53,7 +59,13 @@ void setup()
   M5.Lcd.drawString("S", 160, 220);
   M5.Lcd.drawString("SWR", 250, 220);
 
-  CAT.begin("IC705SMeter");
+  CAT.register_callback(callbackBT);
+ 
+  if(!CAT.begin(NAME)){
+    Serial.println("An error occurred initializing Bluetooth");
+  }else{
+    Serial.println("Bluetooth initialized");
+  }
 }
 
 // Main loop
@@ -63,6 +75,10 @@ void loop()
   uint8_t btnB; 
   uint8_t btnC;
   static uint8_t mode = 2;
+
+  if (btConnected == false) {
+    value("Need Pairing");
+  }
 
   M5.update();
 
@@ -86,19 +102,21 @@ void loop()
     buttonRightPressed = 0;
   }
 
-  switch (mode)
-  {
-  case 1:
-    getPower();
-    break;
-  
-  case 2:
-    getSmeter();
-    break;
-  
-  case 3:
-    getSWR();
-    break;
+  if (btConnected == true) {
+    switch (mode)
+    {
+    case 1:
+      getPower();
+      break;
+    
+    case 2:
+      getSmeter();
+      break;
+    
+    case 3:
+      getSWR();
+      break;
+    }
   }
 
   if (WiFi.status() == WL_CONNECTED)

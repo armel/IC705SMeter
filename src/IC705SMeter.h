@@ -47,6 +47,7 @@ WiFiClient httpClient;
 uint8_t htmlGetRequest;
 uint8_t htmlGetRefresh = 3;
 boolean reset = true;
+boolean btConnected = false;
 
 // Web site Screen Capture stuff
 #define GET_unknown 0

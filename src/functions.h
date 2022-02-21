@@ -1,6 +1,22 @@
 // Copyright (c) F4HWN Armel. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
+// Bluetooth callback
+void callbackBT(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
+{
+  if (event == ESP_SPP_SRV_OPEN_EVT)
+  {
+    Serial.println("Client Connected");
+    btConnected = true;
+  }
+
+  if (event == ESP_SPP_CLOSE_EVT)
+  {
+    Serial.println("Client disconnected");
+    btConnected = false;
+  }
+}
+
 // Manage rotation
 void rotate(uint16_t *x, uint16_t *y, float angle)
 {
@@ -57,7 +73,7 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
 // Print value
 void value(String valString)
 {
-  String valStringOld;
+  static String valStringOld;
 
   if (valString != valStringOld)
   {
@@ -65,7 +81,7 @@ void value(String valString)
 
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.setFreeFont(&stencilie16pt7b);
-    M5.Lcd.setTextPadding(180);
+    M5.Lcd.setTextPadding(190);
     M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
     valString.replace(".", ",");
     M5.Lcd.drawString(valString, 160, 170);

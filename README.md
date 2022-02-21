@@ -12,9 +12,12 @@
 ![activity](https://img.shields.io/github/commit-activity/y/armel/IC705SMeter)
 
 
-Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM,  d'un S-Mètre à aiguille ! C'est tout ;)
+Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM, d'un S-Mètre à aiguille !
+Le S-Mètre permet de mesurer le signal S, la puissance RF et le SWR.
 
-![IC705SMeter](https://github.com/armel/IC705SMeter/blob/main/img/IC750SMeter.jpeg)
+![IC705SMeter S](https://github.com/armel/IC705SMeter/blob/main/img/S.jpeg)
+![IC705SMeter PWR](https://github.com/armel/IC705SMeter/blob/main/img/PWR.jpeg)
+![IC705SMeter SWR](https://github.com/armel/IC705SMeter/blob/main/img/SWR.jpeg)
 
 # Architecture technique
 
@@ -62,10 +65,61 @@ Ensuite, toujours sur votre PC ou Mac, cloner le projet IC705SMeter via la comma
 
 `https://github.com/armel/IC705SMeter.git`
 
-## Compilation et flashage du M5Stack
+## Configuration
 
 Ouvrez le projet IC705SMeter avec PlateformIO for VSCode.
 
-Editer éventuellement le fichier `src/IC705SMeter.h` afin de modifier l'adresse de votre IC705 si nécessaire. J'ai indiqué la valeur par défaut.
+### Fichier `src/settings.h`
+
+#### Type de carte
+
+Ligne 5, vérifier que la constante `BOARD` correspond bien à votre type de M5Stack (par défaut, la constante est initialisée à `BASIC`). Donc, indiquer : 
+
+- `BASIC` si vous avez un M5Stack BASIC
+
+```
+#define BOARD BASIC
+```
+
+- `GREY` si vous avez un M5Stack GREY
+
+```
+#define BOARD GREY
+```
+
+- `CORE2` si vous avez un M5Stack CORE2
+
+```
+#define BOARD CORE2
+```
+
+#### Adresse de votre IC705
+Ligne 8, modifier l'adresse de votre IC705 si nécessaire. J'ai indiqué la valeur par défaut.
+
+
+#### Configuration Wifi 
+Ligne 11 et 12, indiquer éventuellement votre SSID et votre mot de passe Wifi. Vous pourrez visualiser votre IC705SMeter depuis un simple navigateur. Il est même possible de le piloter par ce biais, dans la mesure ou les boutons sont cliquables. Afin d'afficher votre IC705SMeter dans votre navigateur, il suffit d'aller sur `http://adresse_ip_de_votre_ic705smeter/`. Pour rappel, l'adresse IP que récupère votre IC705SMeter s'affiche sur l'écran.
+
+> Attention : c'est lent ! Et il n'y a pas de rafraîchissement automatique. Il faut cliquer sur le fond de l'image de l'écran pour faire une nouvelle capture. Et sinon, comme dit, les boutons sont fonctionnels.
+
+### Fichier `platformio.ini``
+
+Si et seulement si __vous utilisez le M5Stack Core2__, éditer le fichier `platformio.ini` et modifier les lignes,
+
+```
+default_envs = m5stack-basic-grey
+;default_envs = m5stack-core2
+```
+
+Par,
+
+```
+;default_envs = m5stack-basic-grey
+default_envs = m5stack-core2
+```
+
+Cela revient à changer la plate-forme cible, le point-virgule étant un commentaire.
+
+## Compilation et flashage du M5Stack
 
 Compiler et uploader le projet sur votre M5Stack. C'est terminé.
