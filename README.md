@@ -128,7 +128,7 @@ Compiler et uploader le projet sur votre M5Stack. C'est terminé.
 
 # Utilisation
 
-Une fois lancé, vous devez connecter votre IC705 à votre M5Stack via le menu (SET/Bluetooth Set) de votre transceiver. Référez vous à la documentation, si besoin.
+Une fois lancé, vous devez connecter votre IC705 à votre M5Stack via le menu (Set / Bluetooth Set) de votre transceiver. Référez vous à la documentation, si besoin.
 
 A l'aide des boutons, vous pouvez changer de mesure :
 
