@@ -16,13 +16,10 @@ Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM, 
 Le S-Mètre permet de mesurer le signal S, la puissance RF et le SWR.
 
 ![IC705SMeter S](https://github.com/armel/IC705SMeter/blob/main/img/S.png)
-*IC705SMeter signal S*
 
 ![IC705SMeter PWR](https://github.com/armel/IC705SMeter/blob/main/img/PWR.png)
-*IC705SMeter puissance RF*
 
 ![IC705SMeter SWR](https://github.com/armel/IC705SMeter/blob/main/img/SWR.png)
-*IC705SMeter SWR*
 
 # Architecture technique
 
