@@ -102,7 +102,7 @@ Ligne 11 et 12, indiquer éventuellement votre SSID et votre mot de passe Wifi. 
 
 > Attention : c'est lent ! Et il n'y a pas de rafraîchissement automatique. Il faut cliquer sur le fond de l'image de l'écran pour faire une nouvelle capture. Et sinon, comme dit, les boutons sont fonctionnels.
 
-### Fichier `platformio.ini``
+### Fichier `platformio.ini`
 
 Si et seulement si __vous utilisez le M5Stack Core2__, éditer le fichier `platformio.ini` et modifier les lignes,
 
