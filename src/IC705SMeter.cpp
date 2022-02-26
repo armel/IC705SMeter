@@ -41,23 +41,25 @@ void setup()
   M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
   M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
 
+  /*
   M5.Lcd.setTextDatum(CC_DATUM);
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 195);
+  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 145);
 
   if(WiFi.status() == WL_CONNECTED) {
-    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 205);
+    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 155);
   }
+  */
 
   M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&stencilie16pt7b);
+  M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString("PWR", 70, 220);
-  M5.Lcd.drawString("S", 160, 220);
-  M5.Lcd.drawString("SWR", 250, 220);
+  M5.Lcd.drawString("PWR", 70, 230);
+  M5.Lcd.drawString("S", 160, 230);
+  M5.Lcd.drawString("SWR", 250, 230);
 
   CAT.register_callback(callbackBT);
  
@@ -77,7 +79,7 @@ void loop()
   static uint8_t mode = 2;
 
   if (btConnected == false) {
-    value("Need Pairing");
+    value("NEED PAIRING");
   }
 
   M5.update();
@@ -103,6 +105,10 @@ void loop()
   }
 
   if (btConnected == true) {
+    getFrequency();
+
+    delay(25);
+
     switch (mode)
     {
     case 1:
@@ -124,5 +130,5 @@ void loop()
     getScreenshot();
   }
 
-  delay(50);
+  delay(25);
 }
