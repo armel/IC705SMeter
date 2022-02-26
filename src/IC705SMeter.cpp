@@ -15,6 +15,10 @@ void setup()
   // Init M5
   M5.begin(true, false, false, false);
 
+  // Preferences
+  preferences.begin(NAME);
+  mode = preferences.getUInt("mode", 2);
+
   // Bin Loader
   binLoader();
 
@@ -76,7 +80,6 @@ void loop()
   uint8_t btnA;
   uint8_t btnB; 
   uint8_t btnC;
-  static uint8_t mode = 2;
 
   if (btConnected == false) {
     value("NEED PAIRING");
@@ -103,6 +106,8 @@ void loop()
     reset = true;
     buttonRightPressed = 0;
   }
+
+  preferences.putUInt("mode", mode);
 
   if (btConnected == true) {
     getFrequency();

@@ -21,6 +21,7 @@
 #endif
 
 #include <WiFiClientSecure.h>
+#include <Preferences.h>
 #include <HTTPClient.h>
 #include "BluetoothSerial.h"
 #include <font.h>
@@ -41,11 +42,15 @@
 // Bluetooth connector
 BluetoothSerial CAT;
 
+// Preferences
+Preferences preferences;
+
 // Global Variables
 WiFiServer httpServer(80);
 WiFiClient httpClient;
 uint8_t htmlGetRequest;
 uint8_t htmlGetRefresh = 3;
+uint8_t mode = 2;
 boolean reset = true;
 boolean btConnected = false;
 
