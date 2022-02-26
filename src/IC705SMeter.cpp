@@ -57,14 +57,6 @@ void setup()
   }
   */
 
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
-  M5.Lcd.setTextPadding(0);
-  M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString("PWR", 55, 230);
-  M5.Lcd.drawString("S", 160, 230);
-  M5.Lcd.drawString("SWR", 265, 230);
-
   CAT.register_callback(callbackBT);
  
   if(!CAT.begin(NAME)){

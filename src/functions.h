@@ -43,7 +43,7 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // Print needle
-void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 120)
+void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 110)
 {
   uint16_t x, y;
 
@@ -71,7 +71,7 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
 }
 
 // Print value
-void value(String valString, uint8_t x = 160, uint8_t y = 170)
+void value(String valString, uint8_t x = 160, uint8_t y = 180)
 {
   static String valStringOld;
 
@@ -91,16 +91,16 @@ void value(String valString, uint8_t x = 160, uint8_t y = 170)
     M5.Lcd.setFreeFont(0);
     M5.Lcd.setTextPadding(0);
     M5.Lcd.setTextColor(TFT_DARKGREY);
-    M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 140);
+    M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 150);
 
     if(WiFi.status() == WL_CONNECTED) {
-      M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 150);
+      M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
     }
   }
 }
 
 // Print value
-void subValue(String valString, uint8_t x = 160, uint8_t y = 195)
+void subValue(String valString, uint8_t x = 160, uint8_t y = 205)
 {
   static String valStringOld;
 
@@ -119,7 +119,7 @@ void subValue(String valString, uint8_t x = 160, uint8_t y = 195)
 }
 
 void viewOption() {
-  uint16_t i = 55;
+  uint16_t i = 65;
   uint8_t j;
 
   M5.Lcd.setTextDatum(CC_DATUM);
@@ -128,14 +128,14 @@ void viewOption() {
 
   for (j = 0; j<=2; j++) {
     if(mode == j) {
-      M5.Lcd.setTextColor(TFT_DARKGREEN);
+      M5.Lcd.setTextColor(TFT_BLACK);
     }
     else {
-      M5.Lcd.setTextColor(TFT_RED);
+      M5.Lcd.setTextColor(TFT_DARKGREY);
     }
    
     M5.Lcd.drawString(option[j], i, 230);
-    i += 105;
+    i += 95;
   }
 }
 
