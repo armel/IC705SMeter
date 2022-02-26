@@ -54,6 +54,8 @@ uint8_t mode = 2;
 boolean reset = true;
 boolean btConnected = false;
 
+const char *option[] = {"PWR", "S", "SWR"};
+
 // Web site Screen Capture stuff
 #define GET_unknown 0
 #define GET_index_page  1

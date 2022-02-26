@@ -118,6 +118,27 @@ void subValue(String valString, uint8_t x = 160, uint8_t y = 195)
   }
 }
 
+void viewOption() {
+  uint16_t i = 55;
+  uint8_t j;
+
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
+  M5.Lcd.setTextPadding(0);
+
+  for (j = 0; j<=2; j++) {
+    if(mode == j) {
+      M5.Lcd.setTextColor(TFT_DARKGREEN);
+    }
+    else {
+      M5.Lcd.setTextColor(TFT_RED);
+    }
+   
+    M5.Lcd.drawString(option[j], i, 230);
+    i += 105;
+  }
+}
+
 // List files on SPIFFS
 void getBinaryList(File dir)
 {
@@ -267,7 +288,7 @@ void getSmeter()
 {
   String valString;
 
-  uint8_t buffer[8];
+  uint8_t buffer[128];
   uint8_t byte1, byte2, byte3;
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x02, 0xFD};
 
@@ -340,6 +361,7 @@ void getSmeter()
         }
 
         // Debug trace
+        /*
         Serial.print(val0);
         Serial.print(" ");
         Serial.print(val1);
@@ -347,6 +369,7 @@ void getSmeter()
         Serial.print(val2);
         Serial.print(" ");
         Serial.println(angle);
+        */
 
         // Draw line
         needle(angle);
@@ -371,7 +394,7 @@ void getSWR()
   float_t angle = 0;
 
   uint8_t counter = 0;
-  uint8_t buffer[8];
+  uint8_t buffer[128];
   uint8_t byte1, byte2, byte3;
 
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x12, 0xFD};
@@ -453,11 +476,13 @@ void getSWR()
         valString = "SWR " + String(val1);
 
         // Debug trace
+        /*
         Serial.print(val0);
         Serial.print(" ");
         Serial.print(val1);
         Serial.print(" ");
         Serial.println(angle);
+        */
 
         // Draw line
         needle(angle);
@@ -483,7 +508,7 @@ void getPower()
   float_t angle = 0;
 
   uint8_t counter = 0;
-  uint8_t buffer[8];
+  uint8_t buffer[128];
   uint8_t byte1, byte2, byte3;
 
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x14, 0x0A, 0xFD};
@@ -593,7 +618,7 @@ void getFrequency()
   const uint32_t decMulti[] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1};
 
   uint8_t counter = 0;
-  uint8_t buffer[8];
+  uint8_t buffer[128];
   uint8_t byte1, byte2, byte3;
   uint8_t lenght = 0;
 
@@ -621,6 +646,9 @@ void getFrequency()
           buffer[counter] = byte3;
           byte3 = CAT.read();
           counter++;
+          if(counter > 8) {
+            break;
+          }
         }
       }
     }

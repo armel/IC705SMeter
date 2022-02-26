@@ -61,9 +61,9 @@ void setup()
   M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString("PWR", 70, 230);
+  M5.Lcd.drawString("PWR", 55, 230);
   M5.Lcd.drawString("S", 160, 230);
-  M5.Lcd.drawString("SWR", 250, 230);
+  M5.Lcd.drawString("SWR", 265, 230);
 
   CAT.register_callback(callbackBT);
  
@@ -92,17 +92,17 @@ void loop()
   btnC = M5.BtnC.read();
 
   if(btnA == 1 || buttonLeftPressed == 1) {
-    mode = 1;
+    mode = 0;
     reset = true;
     buttonLeftPressed = 0;
   }
   else if(btnB == 1 || buttonCenterPressed == 1) {
-    mode = 2;
+    mode = 1;
     reset = true;
     buttonCenterPressed = 0;
   }
   else if(btnC == 1 || buttonRightPressed == 1) {
-    mode = 3;
+    mode = 2;
     reset = true;
     buttonRightPressed = 0;
   }
@@ -116,19 +116,21 @@ void loop()
 
     switch (mode)
     {
-    case 1:
+    case 0:
       getPower();
       break;
     
-    case 2:
+    case 1:
       getSmeter();
       break;
     
-    case 3:
+    case 2:
       getSWR();
       break;
     }
   }
+
+  viewOption();
 
   if (WiFi.status() == WL_CONNECTED)
   {
