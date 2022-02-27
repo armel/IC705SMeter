@@ -21,6 +21,7 @@
 #endif
 
 #include <WiFiClientSecure.h>
+#include <Preferences.h>
 #include <HTTPClient.h>
 #include "BluetoothSerial.h"
 #include <font.h>
@@ -29,7 +30,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "1.2"
+#define VERSION "1.3"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
@@ -41,13 +42,19 @@
 // Bluetooth connector
 BluetoothSerial CAT;
 
+// Preferences
+Preferences preferences;
+
 // Global Variables
 WiFiServer httpServer(80);
 WiFiClient httpClient;
 uint8_t htmlGetRequest;
 uint8_t htmlGetRefresh = 3;
+uint8_t mode = 2;
 boolean reset = true;
 boolean btConnected = false;
+
+const char *option[] = {"PWR", "S", "SWR"};
 
 // Web site Screen Capture stuff
 #define GET_unknown 0

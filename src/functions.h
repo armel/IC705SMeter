@@ -43,7 +43,7 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // Print needle
-void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 100)
+void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 110)
 {
   uint16_t x, y;
 
@@ -71,7 +71,7 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
 }
 
 // Print value
-void value(String valString)
+void value(String valString, uint8_t x = 160, uint8_t y = 180)
 {
   static String valStringOld;
 
@@ -81,10 +81,61 @@ void value(String valString)
 
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.setFreeFont(&stencilie16pt7b);
+    //M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
     M5.Lcd.setTextPadding(190);
     M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
     valString.replace(".", ",");
-    M5.Lcd.drawString(valString, 160, 170);
+    M5.Lcd.drawString(valString, x, y);
+
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(0);
+    M5.Lcd.setTextPadding(0);
+    M5.Lcd.setTextColor(TFT_DARKGREY);
+    M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 150);
+
+    if(WiFi.status() == WL_CONNECTED) {
+      M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
+    }
+  }
+}
+
+// Print value
+void subValue(String valString, uint8_t x = 160, uint8_t y = 205)
+{
+  static String valStringOld;
+
+  if (valString != valStringOld)
+  {
+    valStringOld = valString;
+
+    M5.Lcd.setTextDatum(CC_DATUM);
+    //M5.Lcd.setFreeFont(&stencilie16pt7b);
+    M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
+    M5.Lcd.setTextPadding(140);
+    M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
+    //valString.replace(".", ",");
+    M5.Lcd.drawString(valString, x, y);
+  }
+}
+
+void viewOption() {
+  uint16_t i = 65;
+  uint8_t j;
+
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
+  M5.Lcd.setTextPadding(0);
+
+  for (j = 0; j<=2; j++) {
+    if(mode == j) {
+      M5.Lcd.setTextColor(TFT_BLACK);
+    }
+    else {
+      M5.Lcd.setTextColor(TFT_DARKGREY);
+    }
+   
+    M5.Lcd.drawString(option[j], i, 230);
+    i += 95;
   }
 }
 
@@ -237,7 +288,7 @@ void getSmeter()
 {
   String valString;
 
-  uint8_t buffer[1024];
+  uint8_t buffer[128];
   uint8_t byte1, byte2, byte3;
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x02, 0xFD};
 
@@ -248,7 +299,7 @@ void getSmeter()
 
   float_t angle = 0;
 
-  uint16_t counter = 0;
+  uint8_t counter = 0;
   char str[12];
 
   for (uint8_t i = 0; i < sizeof(request); i++)
@@ -310,6 +361,7 @@ void getSmeter()
         }
 
         // Debug trace
+        /*
         Serial.print(val0);
         Serial.print(" ");
         Serial.print(val1);
@@ -317,6 +369,7 @@ void getSmeter()
         Serial.print(val2);
         Serial.print(" ");
         Serial.println(angle);
+        */
 
         // Draw line
         needle(angle);
@@ -340,8 +393,8 @@ void getSWR()
 
   float_t angle = 0;
 
-  uint16_t counter = 0;
-  uint8_t buffer[1024];
+  uint8_t counter = 0;
+  uint8_t buffer[128];
   uint8_t byte1, byte2, byte3;
 
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x12, 0xFD};
@@ -423,11 +476,13 @@ void getSWR()
         valString = "SWR " + String(val1);
 
         // Debug trace
+        /*
         Serial.print(val0);
         Serial.print(" ");
         Serial.print(val1);
         Serial.print(" ");
         Serial.println(angle);
+        */
 
         // Draw line
         needle(angle);
@@ -452,8 +507,8 @@ void getPower()
 
   float_t angle = 0;
 
-  uint16_t counter = 0;
-  uint8_t buffer[1024];
+  uint8_t counter = 0;
+  uint8_t buffer[128];
   uint8_t byte1, byte2, byte3;
 
   uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x14, 0x0A, 0xFD};
@@ -547,6 +602,76 @@ void getPower()
       }
     }
     delay(25);
+  }
+}
+
+// Get Power
+void getFrequency()
+{
+  String valString;
+
+  String val0;
+  String val1;
+  String val2;
+
+  uint32_t frequency;      //Current frequency in Hz
+  const uint32_t decMulti[] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1};
+
+  uint8_t counter = 0;
+  uint8_t buffer[128];
+  uint8_t byte1, byte2, byte3;
+  uint8_t lenght = 0;
+
+  uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x03, 0xFD};
+
+  while(counter != 8) {
+    for (uint8_t i = 0; i < sizeof(request); i++)
+    {
+      CAT.write(request[i]);
+    }
+
+    delay(50);
+
+    while (CAT.available())
+    {
+      byte1 = CAT.read();
+      byte2 = CAT.read();
+
+      if (byte1 == 0xFE && byte2 == 0xFE)
+      {
+        counter = 0;
+        byte3 = CAT.read();
+        while (byte3 != 0xFD)
+        {
+          buffer[counter] = byte3;
+          byte3 = CAT.read();
+          counter++;
+          if(counter > 8) {
+            break;
+          }
+        }
+      }
+    }
+    delay(50);
+  }
+
+  if(counter == 8) {
+    frequency = 0;
+    for (uint8_t i = 2; i < 7; i++)
+    {
+        frequency += (buffer[9 - i] >> 4) * decMulti[(i - 2) * 2];
+        frequency += (buffer[9 - i] & 0x0F) * decMulti[(i - 2) * 2 + 1];
+    }
+
+    valString = String(frequency);
+    lenght = valString.length();
+    val0 = valString.substring(lenght - 3, lenght);
+    val1 = valString.substring(lenght - 6, lenght - 3);
+    val2 = valString.substring(0, lenght - 6);
+
+    //Serial.println(frequency);
+
+    subValue(val2 + "." + val1 + "." + val0);
   }
 }
 

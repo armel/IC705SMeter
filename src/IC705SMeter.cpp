@@ -15,6 +15,10 @@ void setup()
   // Init M5
   M5.begin(true, false, false, false);
 
+  // Preferences
+  preferences.begin(NAME);
+  mode = preferences.getUInt("mode", 2);
+
   // Bin Loader
   binLoader();
 
@@ -41,23 +45,17 @@ void setup()
   M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
   M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
 
+  /*
   M5.Lcd.setTextDatum(CC_DATUM);
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextPadding(0);
   M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 195);
+  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 145);
 
   if(WiFi.status() == WL_CONNECTED) {
-    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 205);
+    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 155);
   }
-
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&stencilie16pt7b);
-  M5.Lcd.setTextPadding(0);
-  M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString("PWR", 70, 220);
-  M5.Lcd.drawString("S", 160, 220);
-  M5.Lcd.drawString("SWR", 250, 220);
+  */
 
   CAT.register_callback(callbackBT);
  
@@ -74,10 +72,9 @@ void loop()
   uint8_t btnA;
   uint8_t btnB; 
   uint8_t btnC;
-  static uint8_t mode = 2;
 
   if (btConnected == false) {
-    value("Need Pairing");
+    value("NEED PAIRING");
   }
 
   M5.update();
@@ -87,42 +84,50 @@ void loop()
   btnC = M5.BtnC.read();
 
   if(btnA == 1 || buttonLeftPressed == 1) {
-    mode = 1;
+    mode = 0;
     reset = true;
     buttonLeftPressed = 0;
   }
   else if(btnB == 1 || buttonCenterPressed == 1) {
-    mode = 2;
+    mode = 1;
     reset = true;
     buttonCenterPressed = 0;
   }
   else if(btnC == 1 || buttonRightPressed == 1) {
-    mode = 3;
+    mode = 2;
     reset = true;
     buttonRightPressed = 0;
   }
 
+  preferences.putUInt("mode", mode);
+
   if (btConnected == true) {
+    getFrequency();
+
+    delay(25);
+
     switch (mode)
     {
-    case 1:
+    case 0:
       getPower();
       break;
     
-    case 2:
+    case 1:
       getSmeter();
       break;
     
-    case 3:
+    case 2:
       getSWR();
       break;
     }
   }
+
+  viewOption();
 
   if (WiFi.status() == WL_CONNECTED)
   {
     getScreenshot();
   }
 
-  delay(50);
+  delay(25);
 }
