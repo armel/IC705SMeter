@@ -49,12 +49,8 @@ void setup()
   M5.Lcd.setTextDatum(CC_DATUM);
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextPadding(0);
-  M5.Lcd.setTextColor(TFT_BLACK);
-  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 145);
-
-  if(WiFi.status() == WL_CONNECTED) {
-    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 155);
-  }
+  M5.Lcd.setTextColor(TFT_DARKGREY);
+  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
   */
 
   CAT.register_callback(callbackBT);
@@ -72,6 +68,8 @@ void loop()
   uint8_t btnA;
   uint8_t btnB; 
   uint8_t btnC;
+
+  static uint8_t alternance = 0;
 
   if (btConnected == false) {
     value("NEED PAIRING");
@@ -123,6 +121,24 @@ void loop()
   }
 
   viewOption();
+
+  if(alternance == 0) {
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(0);
+    M5.Lcd.setTextPadding(160);
+    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+    M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
+  }
+  else if(alternance == 20 && WiFi.status() == WL_CONNECTED)
+  {
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(0);
+    M5.Lcd.setTextPadding(160);
+    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
+  }
+
+  alternance = (alternance++ < 30) ? alternance : 0;
 
   if (WiFi.status() == WL_CONNECTED)
   {

@@ -45,29 +45,38 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 // Print needle
 void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 110)
 {
+  static float angleOld;
   uint16_t x, y;
 
-  x = a;
-  y = b;
+  if(angle != angleOld) {
+    angleOld = angle;
 
-  rotate(&x, &y, angle);
+    x = a;
+    y = b;
 
-  a = 160 + x;
-  b = 220 - y;
+    rotate(&x, &y, angle);
 
-  x = c;
-  y = d;
+    a = 160 + x;
+    b = 220 - y;
 
-  rotate(&x, &y, angle);
+    x = c;
+    y = d;
 
-  c = 160 + x;
-  d = 220 - y;
+    rotate(&x, &y, angle);
 
-  M5.Lcd.drawLine(a + 2, b, c + 2, d, TFT_NEDDLE_2);
-  M5.Lcd.drawLine(a + 1, b, c + 1, d, TFT_NEDDLE_1);
-  M5.Lcd.drawLine(a, b, c, d, TFT_RED);
-  M5.Lcd.drawLine(a - 1, b, c - 1, d, TFT_NEDDLE_1);
-  M5.Lcd.drawLine(a - 2, b, c - 2, d, TFT_NEDDLE_2);
+    c = 160 + x;
+    d = 220 - y;
+
+    M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 150);
+
+    //M5.Lcd.drawFastHLine(0, 150, 320, TFT_BLACK);
+
+    M5.Lcd.drawLine(a + 2, b, c + 2, d, TFT_NEDDLE_2);
+    M5.Lcd.drawLine(a + 1, b, c + 1, d, TFT_NEDDLE_1);
+    M5.Lcd.drawLine(a, b, c, d, TFT_RED);
+    M5.Lcd.drawLine(a - 1, b, c - 1, d, TFT_NEDDLE_1);
+    M5.Lcd.drawLine(a - 2, b, c - 2, d, TFT_NEDDLE_2);
+  }
 }
 
 // Print value
@@ -86,17 +95,6 @@ void value(String valString, uint8_t x = 160, uint8_t y = 180)
     M5.Lcd.setTextColor(TFT_BLACK, TFT_BACK);
     valString.replace(".", ",");
     M5.Lcd.drawString(valString, x, y);
-
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(0);
-    M5.Lcd.setTextPadding(0);
-    M5.Lcd.setTextColor(TFT_DARKGREY);
-    M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 150);
-
-    if (WiFi.status() == WL_CONNECTED)
-    {
-      M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
-    }
   }
 }
 
@@ -363,8 +361,6 @@ void getSmeter()
       val3 = val0;
       reset = false;
 
-      M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
-
       if (val0 <= 120)
       {
         angle = mapFloat(val0, 0, 120, 49.0f, -6.50f); // SMeter image start at S1 so S0 is out of image on the left...
@@ -459,8 +455,6 @@ void getSWR()
     {
       val3 = val0;
       reset = false;
-
-      M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
       if (val0 <= 48)
       {
@@ -582,8 +576,6 @@ void getPower()
     {
       val3 = val0;
       reset = false;
-
-      M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
       if (val0 <= 13)
       {
@@ -760,8 +752,6 @@ void getDebug()
     {
       val3 = val0;
       reset = false;
-
-      M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
 
       if (val0 <= 120)
       {
