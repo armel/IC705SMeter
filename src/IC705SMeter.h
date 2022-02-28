@@ -30,12 +30,13 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "1.4"
+#define VERSION "1.5"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
 // Needle
 #define TFT_BACK M5.Lcd.color565(255, 248, 236)
+#define TFT_MODE M5.Lcd.color565(84, 103, 143)
 #define TFT_NEDDLE_1 M5.Lcd.color565(241, 120, 100)
 #define TFT_NEDDLE_2 M5.Lcd.color565(241, 170, 170)
 
@@ -50,11 +51,11 @@ WiFiServer httpServer(80);
 WiFiClient httpClient;
 uint8_t htmlGetRequest;
 uint8_t htmlGetRefresh = 3;
-uint8_t mode = 2;
+uint8_t option = 2;
 boolean reset = true;
 boolean btConnected = false;
 
-const char *option[] = {"PWR", "S", "SWR"};
+const char *menu[] = {"PWR", "S", "SWR"};
 
 // Web site Screen Capture stuff
 #define GET_unknown 0

@@ -98,7 +98,7 @@ void value(String valString, uint8_t x = 160, uint8_t y = 180)
   }
 }
 
-// Print value
+// Print sub value
 void subValue(String valString, uint8_t x = 160, uint8_t y = 205)
 {
   static String valStringOld;
@@ -117,7 +117,8 @@ void subValue(String valString, uint8_t x = 160, uint8_t y = 205)
   }
 }
 
-void viewOption()
+// Print option
+void viewMenu()
 {
   uint16_t i = 65;
   uint8_t j;
@@ -128,7 +129,7 @@ void viewOption()
 
   for (j = 0; j <= 2; j++)
   {
-    if (mode == j)
+    if (option == j)
     {
       M5.Lcd.setTextColor(TFT_BLACK);
     }
@@ -137,7 +138,7 @@ void viewOption()
       M5.Lcd.setTextColor(TFT_DARKGREY);
     }
 
-    M5.Lcd.drawString(option[j], i, 230);
+    M5.Lcd.drawString(menu[j], i, 230);
     i += 95;
   }
 }
@@ -286,28 +287,14 @@ void binLoader()
   }
 }
 
-// Get Smeter
-void getSmeter()
-{
-  String valString;
-
-  uint8_t buffer[128];
+// Send CI-V Command
+void sendCommand(char *request, size_t n, char *buffer, uint8_t limit) {
   uint8_t byte1, byte2, byte3;
-  uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x02, 0xFD};
-
-  uint8_t val0 = 0;
-  float_t val1 = 0;
-  float_t val2 = 0;
-  static uint8_t val3 = 0;
-
-  float_t angle = 0;
-
   uint8_t counter = 0;
-  char str[12];
 
-  while (counter != 6)
+  while (counter != limit)
   {
-    for (uint8_t i = 0; i < sizeof(request); i++)
+    for (uint8_t i = 0; i < n; i++)
     {
       CAT.write(request[i]);
     }
@@ -328,7 +315,7 @@ void getSmeter()
           buffer[counter] = byte3;
           byte3 = CAT.read();
           counter++;
-          if (counter > 6)
+          if (counter > limit)
           {
             Serial.println("Overflow");
             break;
@@ -338,57 +325,75 @@ void getSmeter()
     }
     delay(50);
   }
+} 
 
-  if (counter == 6)
+// Get Smeter
+void getSmeter()
+{
+  String valString;
+
+  char str[2];
+  char buffer[6];
+  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x02, 0xFD};
+
+  uint8_t val0 = 0;
+  float_t val1 = 0;
+  float_t val2 = 0;
+  static uint8_t val3 = 0;
+
+  float_t angle = 0;
+
+  size_t n = sizeof(request) / sizeof(request[0]);
+
+  sendCommand(request, n, buffer, 6);
+  
+  Serial.println("Get S");
+  sprintf(str, "%02x%02x", buffer[4], buffer[5]);
+  val0 = atoi(str);
+
+  if (val0 <= 120)
+  { // 120 = S9 = 9 * (40/3)
+    val1 = val0 / (40 / 3.0f);
+    val2 = val0 - (val1 * (40 / 3));
+  }
+  else
+  { // 240 = S9 + 60
+    val1 = (val0 - 120) / 2.0f;
+    val2 = val0 - (val1 * 2);
+  }
+
+  if (abs(val0 - val3) > 1 || reset == true)
   {
-    Serial.println("Get S");
-    sprintf(str, "%02x%02x", buffer[4], buffer[5]);
-    val0 = atoi(str);
+    val3 = val0;
+    reset = false;
 
     if (val0 <= 120)
-    { // 120 = S9 = 9 * (40/3)
-      val1 = val0 / (40 / 3.0f);
-      val2 = val0 - (val1 * (40 / 3));
+    {
+      angle = mapFloat(val0, 0, 120, 49.0f, -6.50f); // SMeter image start at S1 so S0 is out of image on the left...
+      valString = "S " + String(int(round(val1)));
     }
     else
-    { // 240 = S9 + 60
-      val1 = (val0 - 120) / 2.0f;
-      val2 = val0 - (val1 * 2);
-    }
-
-    if (abs(val0 - val3) > 1 || reset == true)
     {
-      val3 = val0;
-      reset = false;
-
-      if (val0 <= 120)
-      {
-        angle = mapFloat(val0, 0, 120, 49.0f, -6.50f); // SMeter image start at S1 so S0 is out of image on the left...
-        valString = "S " + String(int(round(val1)));
-      }
-      else
-      {
-        angle = mapFloat(val0, 121, 241, -6.50f, -43.0f);
-        valString = "S 9 + " + String(int(round(val1))) + " dB";
-      }
-
-      // Debug trace
-      /*
-      Serial.print(val0);
-      Serial.print(" ");
-      Serial.print(val1);
-      Serial.print(" ");
-      Serial.print(val2);
-      Serial.print(" ");
-      Serial.println(angle);
-      */
-
-      // Draw line
-      needle(angle);
-
-      // Write Value
-      value(valString);
+      angle = mapFloat(val0, 121, 241, -6.50f, -43.0f);
+      valString = "S 9 + " + String(int(round(val1))) + " dB";
     }
+
+    // Debug trace
+    /*
+    Serial.print(val0);
+    Serial.print(" ");
+    Serial.print(val1);
+    Serial.print(" ");
+    Serial.print(val2);
+    Serial.print(" ");
+    Serial.println(angle);
+    */
+
+    // Draw line
+    needle(angle);
+
+    // Write Value
+    value(valString);
   }
 }
 
@@ -397,118 +402,81 @@ void getSWR()
 {
   String valString;
 
+  char str[2];
+  char buffer[6];
+  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x12, 0xFD};
+
   uint8_t val0 = 0;
   float_t val1 = 0;
   static uint8_t val3 = 0;
 
   float_t angle = 0;
 
-  uint8_t counter = 0;
-  uint8_t buffer[128];
-  uint8_t byte1, byte2, byte3;
+  size_t n = sizeof(request) / sizeof(request[0]);
 
-  uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x12, 0xFD};
+  sendCommand(request, n, buffer, 6);
 
-  char str[12];
+  Serial.println("Get SWR");
+  sprintf(str, "%02x%02x", buffer[4], buffer[5]);
+  val0 = atoi(str);
 
-  while (counter != 6)
+  if (val0 != val3 || reset == true)
   {
-    for (uint8_t i = 0; i < sizeof(request); i++)
+    val3 = val0;
+    reset = false;
+
+    if (val0 <= 48)
     {
-      CAT.write(request[i]);
+      angle = mapFloat(val0, 0, 48, 42.0f, 32.50f);
+      val1 = mapFloat(val0, 0, 48, 1.0, 1.5);
+    }
+    else if (val0 <= 80)
+    {
+      angle = mapFloat(val0, 49, 80, 32.50f, 24.0f);
+      val1 = mapFloat(val0, 49, 80, 1.5, 2.0);
+    }
+    else if (val0 <= 120)
+    {
+      angle = mapFloat(val0, 81, 120, 24.0f, 10.0f);
+      val1 = mapFloat(val0, 81, 120, 2.0, 3.0);
+    }
+    else if (val0 <= 155)
+    {
+      angle = mapFloat(val0, 121, 155, 10.0f, 0.0f);
+      val1 = mapFloat(val0, 121, 155, 3.0, 4.0);
+    }
+    else if (val0 <= 175)
+    {
+      angle = mapFloat(val0, 156, 175, 0.0f, -7.0f);
+      val1 = mapFloat(val0, 156, 175, 4.0, 5.0);
+    }
+    else if (val0 <= 225)
+    {
+      angle = mapFloat(val0, 176, 225, -7.0f, -19.0f);
+      val1 = mapFloat(val0, 176, 225, 5.0, 10.0);
+    }
+    else
+    {
+      angle = mapFloat(val0, 226, 255, -19.0f, -30.50f);
+      val1 = mapFloat(val0, 226, 255, 10.0, 50.0);
     }
 
-    delay(50);
+    valString = "SWR " + String(val1);
 
-    while (CAT.available())
-    {
-      byte1 = CAT.read();
-      byte2 = CAT.read();
+    // Debug trace
+    /*
+    Serial.print(val0);
+    Serial.print(" ");
+    Serial.print(val1);
+    Serial.print(" ");
+    Serial.println(angle);
+    */
 
-      if (byte1 == 0xFE && byte2 == 0xFE)
-      {
-        counter = 0;
-        byte3 = CAT.read();
-        while (byte3 != 0xFD)
-        {
-          buffer[counter] = byte3;
-          byte3 = CAT.read();
-          counter++;
-          if (counter > 6)
-          {
-            Serial.println("Overflow");
-            break;
-          }
-        }
-      }
-    }
-    delay(50);
-  }
+    // Draw line
+    needle(angle);
 
-  if (counter == 6)
-  {
-    Serial.println("Get SWR");
-    sprintf(str, "%02x%02x", buffer[4], buffer[5]);
-    val0 = atoi(str);
-
-    if (val0 != val3 || reset == true)
-    {
-      val3 = val0;
-      reset = false;
-
-      if (val0 <= 48)
-      {
-        angle = mapFloat(val0, 0, 48, 42.0f, 32.50f);
-        val1 = mapFloat(val0, 0, 48, 1.0, 1.5);
-      }
-      else if (val0 <= 80)
-      {
-        angle = mapFloat(val0, 49, 80, 32.50f, 24.0f);
-        val1 = mapFloat(val0, 49, 80, 1.5, 2.0);
-      }
-      else if (val0 <= 120)
-      {
-        angle = mapFloat(val0, 81, 120, 24.0f, 10.0f);
-        val1 = mapFloat(val0, 81, 120, 2.0, 3.0);
-      }
-      else if (val0 <= 155)
-      {
-        angle = mapFloat(val0, 121, 155, 10.0f, 0.0f);
-        val1 = mapFloat(val0, 121, 155, 3.0, 4.0);
-      }
-      else if (val0 <= 175)
-      {
-        angle = mapFloat(val0, 156, 175, 0.0f, -7.0f);
-        val1 = mapFloat(val0, 156, 175, 4.0, 5.0);
-      }
-      else if (val0 <= 225)
-      {
-        angle = mapFloat(val0, 176, 225, -7.0f, -19.0f);
-        val1 = mapFloat(val0, 176, 225, 5.0, 10.0);
-      }
-      else
-      {
-        angle = mapFloat(val0, 226, 255, -19.0f, -30.50f);
-        val1 = mapFloat(val0, 226, 255, 10.0, 50.0);
-      }
-
-      valString = "SWR " + String(val1);
-
-      // Debug trace
-      /*
-      Serial.print(val0);
-      Serial.print(" ");
-      Serial.print(val1);
-      Serial.print(" ");
-      Serial.println(angle);
-      */
-
-      // Draw line
-      needle(angle);
-
-      // Write Value
-      value(valString);
-    }
+    // Write Value
+    value(valString);
   }
 }
 
@@ -517,6 +485,10 @@ void getPower()
 {
   String valString;
 
+  char str[2];
+  char buffer[6];
+  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x14, 0x0A, 0xFD};
+
   uint8_t val0 = 0;
   float_t val1 = 0;
   float_t val2 = 0;
@@ -524,115 +496,77 @@ void getPower()
 
   float_t angle = 0;
 
-  uint8_t counter = 0;
-  uint8_t buffer[128];
-  uint8_t byte1, byte2, byte3;
+  size_t n = sizeof(request) / sizeof(request[0]);
 
-  uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x14, 0x0A, 0xFD};
+  sendCommand(request, n, buffer, 6);
 
-  char str[12];
+  Serial.println("Get PWR");
+  sprintf(str, "%02x%02x", buffer[4], buffer[5]);
+  val0 = atoi(str);
 
-  while (counter != 6)
+  if (val0 != val3 || reset == true)
   {
-    for (uint8_t i = 0; i < sizeof(request); i++)
+    val3 = val0;
+    reset = false;
+
+    if (val0 <= 13)
     {
-      CAT.write(request[i]);
+      angle = mapFloat(val0, 0, 13, 42.0f, 30.50f);
+      val1 = mapFloat(val0, 0, 13, 0, 0.5);
+    }
+    else if (val0 <= 26)
+    {
+      angle = mapFloat(val0, 14, 26, 30.50f, 23.50f);
+      val1 = mapFloat(val0, 14, 26, 0.5, 1.0);
+    }
+    else if (val0 <= 51)
+    {
+      angle = mapFloat(val0, 27, 51, 23.50f, 14.50f);
+      val1 = mapFloat(val0, 27, 51, 1.0, 2.0);
+    }
+    else if (val0 <= 127)
+    {
+      angle = mapFloat(val0, 52, 127, 14.50f, -6.50f);
+      val1 = mapFloat(val0, 52, 127, 2.0, 5.0);
+    }
+    else if (val0 <= 179)
+    {
+      angle = mapFloat(val0, 128, 179, -6.50f, -17.50f);
+      val1 = mapFloat(val0, 128, 179, 5.0, 7.0);
+    }
+    else
+    {
+      angle = mapFloat(val0, 180, 255, -17.50f, -30.50f);
+      val1 = mapFloat(val0, 180, 255, 7.0, 10.0);
     }
 
-    delay(50);
+    val2 = round(val1 * 10);
+    valString = "PWR " + String((val2 / 10)) + " W";
 
-    while (CAT.available())
-    {
-      byte1 = CAT.read();
-      byte2 = CAT.read();
+    // Debug trace
+    /*
+    Serial.print(val0);
+    Serial.print(" ");
+    Serial.print(val1);
+    Serial.print(" ");
+    Serial.println(angle);
+    */
 
-      if (byte1 == 0xFE && byte2 == 0xFE)
-      {
-        counter = 0;
-        byte3 = CAT.read();
-        while (byte3 != 0xFD)
-        {
-          buffer[counter] = byte3;
-          byte3 = CAT.read();
-          counter++;
-          if (counter > 6)
-          {
-            Serial.println("Overflow");
-            break;
-          }
-        }
-      }
-    }
-    delay(50);
-  }
+    // Draw line
+    needle(angle);
 
-  if (counter == 6)
-  {
-    Serial.println("Get PWR");
-    sprintf(str, "%02x%02x", buffer[4], buffer[5]);
-    val0 = atoi(str);
-
-    if (val0 != val3 || reset == true)
-    {
-      val3 = val0;
-      reset = false;
-
-      if (val0 <= 13)
-      {
-        angle = mapFloat(val0, 0, 13, 42.0f, 30.50f);
-        val1 = mapFloat(val0, 0, 13, 0, 0.5);
-      }
-      else if (val0 <= 26)
-      {
-        angle = mapFloat(val0, 14, 26, 30.50f, 23.50f);
-        val1 = mapFloat(val0, 14, 26, 0.5, 1.0);
-      }
-      else if (val0 <= 51)
-      {
-        angle = mapFloat(val0, 27, 51, 23.50f, 14.50f);
-        val1 = mapFloat(val0, 27, 51, 1.0, 2.0);
-      }
-      else if (val0 <= 127)
-      {
-        angle = mapFloat(val0, 52, 127, 14.50f, -6.50f);
-        val1 = mapFloat(val0, 52, 127, 2.0, 5.0);
-      }
-      else if (val0 <= 179)
-      {
-        angle = mapFloat(val0, 128, 179, -6.50f, -17.50f);
-        val1 = mapFloat(val0, 128, 179, 5.0, 7.0);
-      }
-      else
-      {
-        angle = mapFloat(val0, 180, 255, -17.50f, -30.50f);
-        val1 = mapFloat(val0, 180, 255, 7.0, 10.0);
-      }
-
-      val2 = round(val1 * 10);
-      valString = "PWR " + String((val2 / 10)) + " W";
-
-      // Debug trace
-      /*
-      Serial.print(val0);
-      Serial.print(" ");
-      Serial.print(val1);
-      Serial.print(" ");
-      Serial.println(angle);
-      */
-
-      // Draw line
-      needle(angle);
-
-      // Write Value
-      value(valString);
-    }
+    // Write Value
+    value(valString);
   }
 }
 
-// Get Power
+// Get Frequency
 void getFrequency()
 {
   String valString;
+
+  char buffer[8];
+  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x03, 0xFD};
 
   String val0;
   String val1;
@@ -641,67 +575,60 @@ void getFrequency()
   uint32_t frequency; // Current frequency in Hz
   const uint32_t decMulti[] = {1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10, 1};
 
-  uint8_t counter = 0;
-  uint8_t buffer[128];
-  uint8_t byte1, byte2, byte3;
   uint8_t lenght = 0;
 
-  uint8_t request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x03, 0xFD};
+  size_t n = sizeof(request) / sizeof(request[0]);
 
-  while (counter != 8)
+  sendCommand(request, n, buffer, 8);
+
+  Serial.println("Get frequency");
+  frequency = 0;
+  for (uint8_t i = 2; i < 7; i++)
   {
-    for (uint8_t i = 0; i < sizeof(request); i++)
-    {
-      CAT.write(request[i]);
-    }
-
-    delay(50);
-
-    while (CAT.available())
-    {
-      byte1 = CAT.read();
-      byte2 = CAT.read();
-
-      if (byte1 == 0xFE && byte2 == 0xFE)
-      {
-        counter = 0;
-        byte3 = CAT.read();
-        while (byte3 != 0xFD)
-        {
-          buffer[counter] = byte3;
-          byte3 = CAT.read();
-          counter++;
-          if (counter > 8)
-          {
-            Serial.println("Overflow");
-            break;
-          }
-        }
-      }
-    }
-    delay(50);
+    frequency += (buffer[9 - i] >> 4) * decMulti[(i - 2) * 2];
+    frequency += (buffer[9 - i] & 0x0F) * decMulti[(i - 2) * 2 + 1];
   }
 
-  if (counter == 8)
-  {
-    Serial.println("Get frequency");
-    frequency = 0;
-    for (uint8_t i = 2; i < 7; i++)
-    {
-      frequency += (buffer[9 - i] >> 4) * decMulti[(i - 2) * 2];
-      frequency += (buffer[9 - i] & 0x0F) * decMulti[(i - 2) * 2 + 1];
-    }
+  valString = String(frequency);
+  lenght = valString.length();
+  val0 = valString.substring(lenght - 3, lenght);
+  val1 = valString.substring(lenght - 6, lenght - 3);
+  val2 = valString.substring(0, lenght - 6);
 
-    valString = String(frequency);
-    lenght = valString.length();
-    val0 = valString.substring(lenght - 3, lenght);
-    val1 = valString.substring(lenght - 6, lenght - 3);
-    val2 = valString.substring(0, lenght - 6);
+  subValue(val2 + "." + val1 + "." + val0);
+}
 
-    // Serial.println(frequency);
+// Get Mod
+void getMode()
+{
+  String valString;
 
-    subValue(val2 + "." + val1 + "." + val0);
-  }
+  char buffer[8];
+  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x04, 0xFD};
+
+  String val0;
+  String val1;
+  String val2;
+
+  const char *mode[] = {"LSB", "USB", "AM", "CW", "RTTY", "FM", "WFM", "CW-R", "RTTY-R"};
+
+  size_t n = sizeof(request) / sizeof(request[0]);
+
+  sendCommand(request, n, buffer, 5);
+
+  Serial.println("Get Mode");
+
+  M5.Lcd.fillRoundRect(44, 199, 44, 13, 2, TFT_MODE);
+  M5.Lcd.fillRoundRect(232, 199, 44, 13, 2, TFT_MODE);
+
+  M5.Lcd.setFreeFont(0);
+  M5.Lcd.setTextPadding(24);
+  M5.Lcd.setTextColor(TFT_WHITE);
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.drawString(String(mode[buffer[3]]), 254, 206);
+  M5.Lcd.setTextColor(TFT_WHITE);
+  M5.Lcd.setTextDatum(CC_DATUM);
+  M5.Lcd.drawString("FIL" + String(uint8_t(buffer[4])), 66, 206);
 }
 
 void getDebug()

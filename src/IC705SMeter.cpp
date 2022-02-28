@@ -17,7 +17,7 @@ void setup()
 
   // Preferences
   preferences.begin(NAME);
-  mode = preferences.getUInt("mode", 2);
+  option = preferences.getUInt("option", 2);
 
   // Bin Loader
   binLoader();
@@ -65,6 +65,8 @@ void setup()
 // Main loop
 void loop()
 {
+  String tmp;
+
   uint8_t btnA;
   uint8_t btnB; 
   uint8_t btnC;
@@ -82,29 +84,30 @@ void loop()
   btnC = M5.BtnC.read();
 
   if(btnA == 1 || buttonLeftPressed == 1) {
-    mode = 0;
+    option = 0;
     reset = true;
     buttonLeftPressed = 0;
   }
   else if(btnB == 1 || buttonCenterPressed == 1) {
-    mode = 1;
+    option = 1;
     reset = true;
     buttonCenterPressed = 0;
   }
   else if(btnC == 1 || buttonRightPressed == 1) {
-    mode = 2;
+    option = 2;
     reset = true;
     buttonRightPressed = 0;
   }
 
-  preferences.putUInt("mode", mode);
+  preferences.putUInt("option", option);
 
   if (btConnected == true) {
     getFrequency();
-
+    getMode();
+    
     delay(25);
 
-    switch (mode)
+    switch (option)
     {
     case 0:
       getPower();
@@ -120,7 +123,7 @@ void loop()
     }
   }
 
-  viewOption();
+  viewMenu();
 
   if(alternance == 0) {
     M5.Lcd.setTextDatum(CC_DATUM);
