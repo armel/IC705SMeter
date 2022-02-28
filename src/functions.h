@@ -602,13 +602,11 @@ void getFrequency()
 void getMode()
 {
   String valString;
+  static String modeOld;
+  static String filterOld;
 
   char buffer[8];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x04, 0xFD};
-
-  String val0;
-  String val1;
-  String val2;
 
   const char *mode[] = {"LSB", "USB", "AM", "CW", "RTTY", "FM", "WFM", "CW-R", "RTTY-R"};
 
@@ -618,17 +616,24 @@ void getMode()
 
   Serial.println("Get Mode");
 
-  M5.Lcd.fillRoundRect(44, 199, 44, 13, 2, TFT_MODE);
-  M5.Lcd.fillRoundRect(232, 199, 44, 13, 2, TFT_MODE);
-
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextPadding(24);
   M5.Lcd.setTextColor(TFT_WHITE);
   M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.drawString(String(mode[buffer[3]]), 254, 206);
-  M5.Lcd.setTextColor(TFT_WHITE);
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.drawString("FIL" + String(uint8_t(buffer[4])), 66, 206);
+
+  valString = "FIL" + String(uint8_t(buffer[4]));
+  if(valString != filterOld) {
+    filterOld = valString;
+    M5.Lcd.fillRoundRect(44, 199, 44, 13, 2, TFT_MODE);
+    M5.Lcd.drawString(valString, 66, 206);
+  }
+
+  valString = String(mode[buffer[3]]);
+  if(valString != modeOld) {
+    modeOld = valString;
+    M5.Lcd.fillRoundRect(232, 199, 44, 13, 2, TFT_MODE);
+    M5.Lcd.drawString(valString, 254, 206);
+  }
 }
 
 void getDebug()
