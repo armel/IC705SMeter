@@ -48,7 +48,8 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
   static float angleOld;
   uint16_t x, y;
 
-  if(angle != angleOld) {
+  if (angle != angleOld)
+  {
     angleOld = angle;
 
     x = a;
@@ -69,7 +70,7 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
 
     M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 150);
 
-    //M5.Lcd.drawFastHLine(0, 150, 320, TFT_BLACK);
+    // M5.Lcd.drawFastHLine(0, 150, 320, TFT_BLACK);
 
     M5.Lcd.drawLine(a + 2, b, c + 2, d, TFT_NEDDLE_2);
     M5.Lcd.drawLine(a + 1, b, c + 1, d, TFT_NEDDLE_1);
@@ -288,7 +289,8 @@ void binLoader()
 }
 
 // Send CI-V Command
-void sendCommand(char *request, size_t n, char *buffer, uint8_t limit) {
+void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
+{
   uint8_t byte1, byte2, byte3;
   uint8_t counter = 0;
 
@@ -326,7 +328,7 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit) {
     vTaskDelay(10);
   }
   Serial.println(" Ok");
-} 
+}
 
 // Get Smeter
 void getSmeter()
@@ -347,7 +349,7 @@ void getSmeter()
   size_t n = sizeof(request) / sizeof(request[0]);
 
   sendCommand(request, n, buffer, 6);
-  
+
   Serial.print("Get S");
   sprintf(str, "%02x%02x", buffer[4], buffer[5]);
   val0 = atoi(str);
@@ -644,7 +646,8 @@ void getMode()
   M5.Lcd.setTextDatum(CC_DATUM);
 
   valString = "FIL" + String(uint8_t(buffer[4]));
-  if(valString != filterOld) {
+  if (valString != filterOld)
+  {
     filterOld = valString;
     M5.Lcd.fillRoundRect(44, 199, 44, 13, 2, TFT_MODE);
     M5.Lcd.drawString(valString, 66, 206);
@@ -654,10 +657,12 @@ void getMode()
 
   getDataMode(); // Data ON or OFF ?
 
-  if(dataMode == 1) {
+  if (dataMode == 1)
+  {
     valString += "-D";
   }
-  if(valString != modeOld) {
+  if (valString != modeOld)
+  {
     modeOld = valString;
     M5.Lcd.fillRoundRect(232, 199, 44, 13, 2, TFT_MODE);
     M5.Lcd.drawString(valString, 254, 206);
