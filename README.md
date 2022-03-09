@@ -13,7 +13,7 @@
 
 
 Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM, d'un S-Mètre à aiguille !
-Le S-Mètre permet de mesurer le signal S, la puissance RF et le SWR.
+Le S-Mètre permet de mesurer le signal S, la puissance Po et le SWR.
 Il affiche également la fréquence, le mode et le filtre en cours.
 
 ![IC705SMeter S](https://github.com/armel/IC705SMeter/blob/main/img/S.png)
@@ -133,7 +133,7 @@ Une fois lancé, vous devez connecter votre IC705 à votre M5Stack via le menu (
 
 A l'aide des boutons, vous pouvez changer de mesure :
 
-- gauche : puissance RF ou PWR
+- gauche : puissance Po ou PWR
 - milieu : signal S
 - droite : SWR
 
