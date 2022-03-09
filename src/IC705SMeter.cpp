@@ -32,12 +32,12 @@ void setup()
   }
 
   // Start server (for Web site Screen Capture)
-  httpServer.begin();     
+  httpServer.begin();
 
-  // Let's go
-  #if BOARD == CORE2
+// Let's go
+#if BOARD == CORE2
   M5.Axp.SetLed(0);
-  #endif
+#endif
 
   M5.Lcd.setBrightness(64);
   M5.Lcd.setRotation(1);
@@ -55,50 +55,52 @@ void setup()
   */
 
   CAT.register_callback(callbackBT);
- 
-  if(!CAT.begin(NAME)){
+
+  if (!CAT.begin(NAME))
+  {
     Serial.println("An error occurred initializing Bluetooth");
-  }else{
+  }
+  else
+  {
     Serial.println("Bluetooth initialized");
   }
 
   // Multitasking task for retreive button
- xTaskCreatePinnedToCore(
-      button,           // Function to implement the task
-      "button",         // Name of the task
-      8192,             // Stack size in words
-      NULL,             // Task input parameter
-      4,                // Priority of the task
-      NULL,             // Task handle
-      1);               // Core where the task should run
+  xTaskCreatePinnedToCore(
+      button,   // Function to implement the task
+      "button", // Name of the task
+      8192,     // Stack size in words
+      NULL,     // Task input parameter
+      4,        // Priority of the task
+      NULL,     // Task handle
+      1);       // Core where the task should run
 }
 
 // Main loop
 void loop()
 {
-  String tmp;
   static uint8_t alternance = 0;
 
-  if (btConnected == false) {
+  if (btConnected == false)
+  {
     value("NEED PAIRING");
   }
-  
-  if (btConnected == true) {
+
+  if (btConnected == true)
+  {
     getMode();
     getFrequency();
-    
-    delay(10);
 
     switch (option)
     {
     case 0:
       getPower();
       break;
-    
+
     case 1:
       getSmeter();
       break;
-    
+
     case 2:
       getSWR();
       break;
@@ -107,14 +109,15 @@ void loop()
 
   viewMenu();
 
-  if(alternance == 0) {
+  if (alternance == 0)
+  {
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.setFreeFont(0);
     M5.Lcd.setTextPadding(160);
     M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
     M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
   }
-  else if(alternance == 20 && WiFi.status() == WL_CONNECTED)
+  else if (alternance == 20 && WiFi.status() == WL_CONNECTED)
   {
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.setFreeFont(0);
@@ -130,5 +133,5 @@ void loop()
     getScreenshot();
   }
 
-  delay(10);
+  vTaskDelay(10);
 }
