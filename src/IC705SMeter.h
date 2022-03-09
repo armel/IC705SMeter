@@ -54,6 +54,7 @@ uint8_t htmlGetRefresh = 3;
 uint8_t option = 2;
 boolean reset = true;
 boolean btConnected = false;
+char dataMode = 0;
 
 const char *menu[] = {"PWR", "S", "SWR"};
 

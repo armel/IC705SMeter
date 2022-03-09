@@ -3,6 +3,7 @@
 
 #include <IC705SMeter.h>
 #include "functions.h"
+#include "tasks.h"
 
 // Setup
 void setup()
@@ -60,52 +61,33 @@ void setup()
   }else{
     Serial.println("Bluetooth initialized");
   }
+
+  // Multitasking task for retreive button
+ xTaskCreatePinnedToCore(
+      button,           // Function to implement the task
+      "button",         // Name of the task
+      8192,             // Stack size in words
+      NULL,             // Task input parameter
+      4,                // Priority of the task
+      NULL,             // Task handle
+      1);               // Core where the task should run
 }
 
 // Main loop
 void loop()
 {
   String tmp;
-
-  uint8_t btnA;
-  uint8_t btnB; 
-  uint8_t btnC;
-
   static uint8_t alternance = 0;
 
   if (btConnected == false) {
     value("NEED PAIRING");
   }
-
-  M5.update();
-
-  btnA = M5.BtnA.read();
-  btnB = M5.BtnB.read();
-  btnC = M5.BtnC.read();
-
-  if(btnA == 1 || buttonLeftPressed == 1) {
-    option = 0;
-    reset = true;
-    buttonLeftPressed = 0;
-  }
-  else if(btnB == 1 || buttonCenterPressed == 1) {
-    option = 1;
-    reset = true;
-    buttonCenterPressed = 0;
-  }
-  else if(btnC == 1 || buttonRightPressed == 1) {
-    option = 2;
-    reset = true;
-    buttonRightPressed = 0;
-  }
-
-  preferences.putUInt("option", option);
-
+  
   if (btConnected == true) {
-    getFrequency();
     getMode();
+    getFrequency();
     
-    delay(25);
+    delay(10);
 
     switch (option)
     {
@@ -148,5 +130,5 @@ void loop()
     getScreenshot();
   }
 
-  delay(25);
+  delay(10);
 }

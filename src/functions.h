@@ -299,7 +299,7 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit) {
       CAT.write(request[i]);
     }
 
-    delay(50);
+    vTaskDelay(100);
 
     while (CAT.available())
     {
@@ -317,14 +317,15 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit) {
           counter++;
           if (counter > limit)
           {
-            Serial.println("Overflow");
+            Serial.print(" Overflow");
             break;
           }
         }
       }
     }
-    delay(50);
+    vTaskDelay(10);
   }
+  Serial.println(" Ok");
 } 
 
 // Get Smeter
@@ -347,7 +348,7 @@ void getSmeter()
 
   sendCommand(request, n, buffer, 6);
   
-  Serial.println("Get S");
+  Serial.print("Get S");
   sprintf(str, "%02x%02x", buffer[4], buffer[5]);
   val0 = atoi(str);
 
@@ -416,7 +417,7 @@ void getSWR()
 
   sendCommand(request, n, buffer, 6);
 
-  Serial.println("Get SWR");
+  Serial.print("Get SWR");
   sprintf(str, "%02x%02x", buffer[4], buffer[5]);
   val0 = atoi(str);
 
@@ -500,7 +501,7 @@ void getPower()
 
   sendCommand(request, n, buffer, 6);
 
-  Serial.println("Get PWR");
+  Serial.print("Get PWR");
   sprintf(str, "%02x%02x", buffer[4], buffer[5]);
   val0 = atoi(str);
 
@@ -560,6 +561,27 @@ void getPower()
   }
 }
 
+// Get Data Mode
+void getDataMode()
+{
+  char buffer[6];
+  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x1A, 0x06, 0xFD};
+
+  size_t n = sizeof(request) / sizeof(request[0]);
+
+  sendCommand(request, n, buffer, 6);
+
+  Serial.print("Get Data");
+
+  /*
+  for(int i = 0; i < 6; i++) {
+    Serial.println(int(buffer[i]));
+  }
+  */
+
+  dataMode = buffer[4];
+}
+
 // Get Frequency
 void getFrequency()
 {
@@ -581,7 +603,7 @@ void getFrequency()
 
   sendCommand(request, n, buffer, 8);
 
-  Serial.println("Get frequency");
+  Serial.print("Get frequency");
   frequency = 0;
   for (uint8_t i = 2; i < 7; i++)
   {
@@ -598,23 +620,23 @@ void getFrequency()
   subValue(val2 + "." + val1 + "." + val0);
 }
 
-// Get Mod
+// Get Mode
 void getMode()
 {
   String valString;
   static String modeOld;
   static String filterOld;
 
-  char buffer[8];
+  char buffer[5];
   char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x04, 0xFD};
 
-  const char *mode[] = {"LSB", "USB", "AM", "CW", "RTTY", "FM", "WFM", "CW-R", "RTTY-R"};
+  const char *mode[] = {"LSB", "USB", "AM", "CW", "RTTY", "FM", "WFM", "CW-R", "RTTY-R", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "DV"};
 
   size_t n = sizeof(request) / sizeof(request[0]);
 
   sendCommand(request, n, buffer, 5);
 
-  Serial.println("Get Mode");
+  Serial.print("Get Mode");
 
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextPadding(24);
@@ -629,6 +651,12 @@ void getMode()
   }
 
   valString = String(mode[buffer[3]]);
+
+  getDataMode(); // Data ON or OFF ?
+
+  if(dataMode == 1) {
+    valString += "-D";
+  }
   if(valString != modeOld) {
     modeOld = valString;
     M5.Lcd.fillRoundRect(232, 199, 44, 13, 2, TFT_MODE);
@@ -667,7 +695,7 @@ void getDebug()
       btnC = 0;
     }
 
-    delay(100);
+    vTaskDelay(100);
 
     if (val0 <= 120)
     { // 120 = S9 = 9 * (40/3)
