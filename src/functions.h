@@ -490,7 +490,7 @@ void getPower()
 
   char str[2];
   char buffer[6];
-  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x14, 0x0A, 0xFD};
+  char request[] = {0xFE, 0xFE, IC705_CI_V_ADDRESS, 0xE0, 0x15, 0x11, 0xFD};
 
   uint8_t val0 = 0;
   float_t val1 = 0;
@@ -512,35 +512,40 @@ void getPower()
     val3 = val0;
     reset = false;
 
-    if (val0 <= 13)
+    if (val0 <= 27)
     {
-      angle = mapFloat(val0, 0, 13, 42.0f, 30.50f);
-      val1 = mapFloat(val0, 0, 13, 0, 0.5);
+      angle = mapFloat(val0, 0, 27, 42.0f, 30.50f);
+      val1 = mapFloat(val0, 0, 27, 0, 0.5);
     }
-    else if (val0 <= 26)
+    else if (val0 <= 49)
     {
-      angle = mapFloat(val0, 14, 26, 30.50f, 23.50f);
-      val1 = mapFloat(val0, 14, 26, 0.5, 1.0);
+      angle = mapFloat(val0, 28, 49, 30.50f, 23.50f);
+      val1 = mapFloat(val0, 28, 49, 0.5, 1.0);
     }
-    else if (val0 <= 51)
+    else if (val0 <= 78)
     {
-      angle = mapFloat(val0, 27, 51, 23.50f, 14.50f);
-      val1 = mapFloat(val0, 27, 51, 1.0, 2.0);
+      angle = mapFloat(val0, 50, 78, 23.50f, 14.50f);
+      val1 = mapFloat(val0, 50, 78, 1.0, 2.0);
     }
-    else if (val0 <= 127)
+    else if (val0 <= 104)
     {
-      angle = mapFloat(val0, 52, 127, 14.50f, -6.50f);
-      val1 = mapFloat(val0, 52, 127, 2.0, 5.0);
+      angle = mapFloat(val0, 79, 104, 14.50f, 6.30f);
+      val1 = mapFloat(val0, 79, 104, 2.0, 3.0);
     }
-    else if (val0 <= 179)
+    else if (val0 <= 143)
     {
-      angle = mapFloat(val0, 128, 179, -6.50f, -17.50f);
-      val1 = mapFloat(val0, 128, 179, 5.0, 7.0);
+      angle = mapFloat(val0, 105, 143, 6.30f, -6.50f);
+      val1 = mapFloat(val0, 105, 143, 3.0, 5.0);
+    }
+    else if (val0 <= 175)
+    {
+      angle = mapFloat(val0, 144, 175, -6.50f, -17.50f);
+      val1 = mapFloat(val0, 144, 175, 5.0, 7.0);
     }
     else
     {
-      angle = mapFloat(val0, 180, 255, -17.50f, -30.50f);
-      val1 = mapFloat(val0, 180, 255, 7.0, 10.0);
+      angle = mapFloat(val0, 176, 226, -17.50f, -30.50f);
+      val1 = mapFloat(val0, 176, 226, 7.0, 10.0);
     }
 
     val2 = round(val1 * 10);
@@ -554,7 +559,7 @@ void getPower()
     Serial.print(" ");
     Serial.println(angle);
     */
-
+   
     // Draw line
     needle(angle);
 
@@ -702,39 +707,49 @@ void getDebug()
 
     vTaskDelay(100);
 
-    if (val0 <= 120)
-    { // 120 = S9 = 9 * (40/3)
-      val1 = val0 / (40 / 3.0f);
-      val2 = val0 - (val1 * (40 / 3));
-    }
-    else
-    { // 240 = S9 + 60
-      val1 = (val0 - 120) / 2.0f;
-      val2 = val0 - (val1 * 2);
-    }
-
-    if (abs(val0 - val3) > 2 || reset == true)
+    if (val0 != val3 || reset == true)
     {
       val3 = val0;
       reset = false;
 
-      if (val0 <= 120)
+      if (val0 <= 13)
       {
-        angle = mapFloat(val0, 0, 120, 49.0f, -6.50f); // SMeter image start at S1 so S0 is out of image on the left...
-        valString = "SWR" + String(int(round(val1)));
+        angle = mapFloat(val0, 0, 13, 42.0f, 30.50f);
+        val1 = mapFloat(val0, 0, 13, 0, 0.5);
+      }
+      else if (val0 <= 26)
+      {
+        angle = mapFloat(val0, 14, 26, 30.50f, 23.50f);
+        val1 = mapFloat(val0, 14, 26, 0.5, 1.0);
+      }
+      else if (val0 <= 51)
+      {
+        angle = mapFloat(val0, 27, 51, 23.50f, 14.50f);
+        val1 = mapFloat(val0, 27, 51, 1.0, 2.0);
+      }
+      else if (val0 <= 127)
+      {
+        angle = mapFloat(val0, 52, 127, 14.50f, -6.50f);
+        val1 = mapFloat(val0, 52, 127, 2.0, 5.0);
+      }
+      else if (val0 <= 179)
+      {
+        angle = mapFloat(val0, 128, 179, -6.50f, -17.50f);
+        val1 = mapFloat(val0, 128, 179, 5.0, 7.0);
       }
       else
       {
-        angle = mapFloat(val0, 121, 241, -6.50f, -43.0f);
-        valString = "SWR" + String(int(round(val1)));
+        angle = mapFloat(val0, 180, 255, -17.50f, -30.50f);
+        val1 = mapFloat(val0, 180, 255, 7.0, 10.0);
       }
+
+      val2 = round(val1 * 10);
+      valString = "PWR " + String((val2 / 10)) + " W";
 
       // Debug trace
       Serial.print(val0);
       Serial.print(" ");
       Serial.print(val1);
-      Serial.print(" ");
-      Serial.print(val2);
       Serial.print(" ");
       Serial.println(angle);
 
