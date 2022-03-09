@@ -30,7 +30,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "1.5"
+#define VERSION "1.6"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
@@ -54,6 +54,7 @@ uint8_t htmlGetRefresh = 3;
 uint8_t option = 2;
 boolean reset = true;
 boolean btConnected = false;
+char dataMode = 0;
 
 const char *menu[] = {"PWR", "S", "SWR"};
 
