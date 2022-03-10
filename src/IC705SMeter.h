@@ -30,7 +30,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "1.7"
+#define VERSION "1.8"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
