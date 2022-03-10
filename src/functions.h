@@ -43,7 +43,7 @@ float mapFloat(float x, float in_min, float in_max, float out_min, float out_max
 }
 
 // Print needle
-void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 110)
+void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uint16_t d = 100)
 {
   static float angleOld;
   uint16_t x, y;
@@ -72,11 +72,13 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
 
     // M5.Lcd.drawFastHLine(0, 150, 320, TFT_BLACK);
 
-    M5.Lcd.drawLine(a + 2, b, c + 2, d, TFT_NEDDLE_2);
-    M5.Lcd.drawLine(a + 1, b, c + 1, d, TFT_NEDDLE_1);
+    M5.Lcd.drawLine(a + 2, b, c + 3, d, TFT_NEDDLE_2);
+    M5.Lcd.drawLine(a + 2, b, c + 2, d, TFT_NEDDLE_1);
+    M5.Lcd.drawLine(a + 1, b, c + 1, d, TFT_RED);
     M5.Lcd.drawLine(a, b, c, d, TFT_RED);
-    M5.Lcd.drawLine(a - 1, b, c - 1, d, TFT_NEDDLE_1);
-    M5.Lcd.drawLine(a - 2, b, c - 2, d, TFT_NEDDLE_2);
+    M5.Lcd.drawLine(a - 1, b, c - 1, d, TFT_RED);
+    M5.Lcd.drawLine(a - 2, b, c - 2, d, TFT_NEDDLE_1);
+    M5.Lcd.drawLine(a - 2, b, c - 3, d, TFT_NEDDLE_2);
   }
 }
 
@@ -319,7 +321,7 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
           counter++;
           if (counter > limit)
           {
-            Serial.print(" Overflow");
+            //Serial.print(" Overflow");
             break;
           }
         }
@@ -327,7 +329,7 @@ void sendCommand(char *request, size_t n, char *buffer, uint8_t limit)
     }
     vTaskDelay(10);
   }
-  Serial.println(" Ok");
+  //Serial.println(" Ok");
 }
 
 // Get Smeter
@@ -350,19 +352,18 @@ void getSmeter()
 
   sendCommand(request, n, buffer, 6);
 
-  Serial.print("Get S");
   sprintf(str, "%02x%02x", buffer[4], buffer[5]);
   val0 = atoi(str);
 
   if (val0 <= 120)
   { // 120 = S9 = 9 * (40/3)
     val1 = val0 / (40 / 3.0f);
-    val2 = val0 - (val1 * (40 / 3));
+    val2 = val0 - (val1 * (40 / 3.0f));
   }
   else
   { // 240 = S9 + 60
     val1 = (val0 - 120) / 2.0f;
-    val2 = val0 - (val1 * 2);
+    val2 = val0 - (val1 * 2.0f);
   }
 
   if (abs(val0 - val3) > 1 || reset == true)
@@ -370,9 +371,14 @@ void getSmeter()
     val3 = val0;
     reset = false;
 
-    if (val0 <= 120)
+    if (val0 <= 13)
     {
-      angle = mapFloat(val0, 0, 120, 49.0f, -6.50f); // SMeter image start at S1 so S0 is out of image on the left...
+      angle = 42.50f;
+      valString = "S " + String(int(round(val1)));
+    }
+    else if (val0 <= 120)
+    {
+      angle = mapFloat(val0, 14, 120, 42.50f, -6.50f); // SMeter image start at S1 so S0 is out of image on the left...
       valString = "S " + String(int(round(val1)));
     }
     else
@@ -383,6 +389,7 @@ void getSmeter()
 
     // Debug trace
     /*
+    Serial.print("Get S");
     Serial.print(val0);
     Serial.print(" ");
     Serial.print(val1);
@@ -391,7 +398,7 @@ void getSmeter()
     Serial.print(" ");
     Serial.println(angle);
     */
-
+   
     // Draw line
     needle(angle);
 
@@ -419,7 +426,6 @@ void getSWR()
 
   sendCommand(request, n, buffer, 6);
 
-  Serial.print("Get SWR");
   sprintf(str, "%02x%02x", buffer[4], buffer[5]);
   val0 = atoi(str);
 
@@ -430,7 +436,7 @@ void getSWR()
 
     if (val0 <= 48)
     {
-      angle = mapFloat(val0, 0, 48, 42.0f, 32.50f);
+      angle = mapFloat(val0, 0, 48, 42.50f, 32.50f);
       val1 = mapFloat(val0, 0, 48, 1.0, 1.5);
     }
     else if (val0 <= 80)
@@ -468,6 +474,7 @@ void getSWR()
 
     // Debug trace
     /*
+    Serial.print("Get SWR");
     Serial.print(val0);
     Serial.print(" ");
     Serial.print(val1);
@@ -503,7 +510,6 @@ void getPower()
 
   sendCommand(request, n, buffer, 6);
 
-  Serial.print("Get PWR");
   sprintf(str, "%02x%02x", buffer[4], buffer[5]);
   val0 = atoi(str);
 
@@ -514,7 +520,7 @@ void getPower()
 
     if (val0 <= 27)
     {
-      angle = mapFloat(val0, 0, 27, 42.0f, 30.50f);
+      angle = mapFloat(val0, 0, 27, 42.50f, 30.50f);
       val1 = mapFloat(val0, 0, 27, 0, 0.5);
     }
     else if (val0 <= 49)
@@ -553,6 +559,7 @@ void getPower()
 
     // Debug trace
     /*
+    Serial.print("Get PWR");
     Serial.print(val0);
     Serial.print(" ");
     Serial.print(val1);
@@ -578,13 +585,7 @@ void getDataMode()
 
   sendCommand(request, n, buffer, 6);
 
-  Serial.print("Get Data");
-
-  /*
-  for(int i = 0; i < 6; i++) {
-    Serial.println(int(buffer[i]));
-  }
-  */
+  //Serial.print("Get Data");
 
   dataMode = buffer[4];
 }
@@ -610,7 +611,6 @@ void getFrequency()
 
   sendCommand(request, n, buffer, 8);
 
-  Serial.print("Get frequency");
   frequency = 0;
   for (uint8_t i = 2; i < 7; i++)
   {
@@ -625,6 +625,9 @@ void getFrequency()
   val2 = valString.substring(0, lenght - 6);
 
   subValue(val2 + "." + val1 + "." + val0);
+
+  //Serial.print("Get frequency");
+
 }
 
 // Get Mode
@@ -642,8 +645,6 @@ void getMode()
   size_t n = sizeof(request) / sizeof(request[0]);
 
   sendCommand(request, n, buffer, 5);
-
-  Serial.print("Get Mode");
 
   M5.Lcd.setFreeFont(0);
   M5.Lcd.setTextPadding(24);
@@ -672,6 +673,8 @@ void getMode()
     M5.Lcd.fillRoundRect(232, 199, 44, 13, 2, TFT_MODE);
     M5.Lcd.drawString(valString, 254, 206);
   }
+
+  //Serial.print("Get Mode");
 }
 
 void getDebug()
