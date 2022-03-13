@@ -17,6 +17,48 @@ void callbackBT(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
   }
 }
 
+// Print battery
+void viewBattery() {
+  static uint8_t batteryLevelOld = 0;
+  static boolean batteryCharginglOld = 0;
+
+  uint8_t batteryLevel;
+  boolean batteryCharging;
+
+  // On left, view battery level
+  batteryLevel = map(getBatteryLevel(1), 0, 100, 0, 16);
+  batteryCharging = isCharging();
+
+  if(batteryLevel != batteryLevelOld || batteryCharging != batteryCharginglOld) {
+
+    M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 20);
+
+    //M5.Lcd.drawFastHLine(0, 20, 320, TFT_BLACK);
+
+    batteryLevelOld = batteryLevel;
+    batteryCharginglOld = batteryCharging;
+    
+    M5.Lcd.drawRect(294, 4, 20, 12, TFT_BLACK);
+    M5.Lcd.drawRect(313, 7, 4, 6, TFT_BLACK);
+    M5.Lcd.fillRect(296, 6, batteryLevel, 8, TFT_BLACK);
+      
+    if(batteryCharging) {
+      M5.Lcd.setTextColor(TFT_BLACK);
+      M5.Lcd.setFreeFont(0);
+      M5.Lcd.setTextDatum(CC_DATUM);
+      M5.Lcd.setTextPadding(0);
+      M5.Lcd.drawString("+", 290, 11);
+    }
+    else {
+      M5.Lcd.setTextColor(TFT_BLACK);
+      M5.Lcd.setFreeFont(0);
+      M5.Lcd.setTextDatum(CR_DATUM);
+      M5.Lcd.setTextPadding(0);
+      M5.Lcd.drawString(String(getBatteryLevel(1)) + "%", 290, 11);
+    }
+  }
+}
+
 // Manage rotation
 void rotate(uint16_t *x, uint16_t *y, float angle)
 {
@@ -68,7 +110,7 @@ void needle(float_t angle, uint16_t a = 0, uint16_t b = 200, uint16_t c = 0, uin
     c = 160 + x;
     d = 220 - y;
 
-    M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 150);
+    M5.Lcd.drawJpg(smeterMiddle, sizeof(smeterMiddle), 0, 20, 320, 130);
 
     // M5.Lcd.drawFastHLine(0, 150, 320, TFT_BLACK);
 
@@ -123,26 +165,63 @@ void subValue(String valString, uint8_t x = 160, uint8_t y = 205)
 // Print option
 void viewMenu()
 {
+  static uint8_t optionOld = 5;
   uint16_t i = 65;
   uint8_t j;
 
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
-  M5.Lcd.setTextPadding(0);
+  if(option != optionOld) {
+    optionOld = option;
 
-  for (j = 0; j <= 2; j++)
-  {
-    if (option == j)
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
+    M5.Lcd.setTextPadding(0);
+
+    for (j = 0; j <= 2; j++)
     {
-      M5.Lcd.setTextColor(TFT_BLACK);
+      if (option == j)
+      {
+        M5.Lcd.setTextColor(TFT_BLACK);
+        reset = true;
+      }
+      else
+      {
+        M5.Lcd.setTextColor(TFT_DARKGREY);
+      }
+
+      M5.Lcd.drawString(menu[j], i, 230);
+      i += 95;
+    }
+  }
+}
+
+// Print baseline
+void viewBaseline(uint8_t alternance)
+{
+  if(btnL || btnR)
+  {
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(0);
+    M5.Lcd.setTextPadding(160);
+    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+    M5.Lcd.drawString("Brightness " + String(brightness), 160, 160);
+  }
+  else {
+    if (alternance > 20 && WiFi.status() == WL_CONNECTED)
+    {
+      M5.Lcd.setTextDatum(CC_DATUM);
+      M5.Lcd.setFreeFont(0);
+      M5.Lcd.setTextPadding(160);
+      M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+      M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
     }
     else
     {
-      M5.Lcd.setTextColor(TFT_DARKGREY);
+      M5.Lcd.setTextDatum(CC_DATUM);
+      M5.Lcd.setFreeFont(0);
+      M5.Lcd.setTextPadding(160);
+      M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+      M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
     }
-
-    M5.Lcd.drawString(menu[j], i, 230);
-    i += 95;
   }
 }
 

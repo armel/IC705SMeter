@@ -16,9 +16,13 @@ void setup()
   // Init M5
   M5.begin(true, false, false, false);
 
+  // Init Power
+  power();
+
   // Preferences
   preferences.begin(NAME);
   option = preferences.getUInt("option", 2);
+  brightness = preferences.getUInt("brightness", 64);
 
   // Bin Loader
   binLoader();
@@ -39,11 +43,12 @@ void setup()
   M5.Axp.SetLed(0);
 #endif
 
-  M5.Lcd.setBrightness(64);
+  setBrightness(brightness);
   M5.Lcd.setRotation(1);
   M5.Lcd.fillScreen(TFT_BACK);
 
-  M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
+  M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 20);
+  M5.Lcd.drawJpg(smeterMiddle, sizeof(smeterMiddle), 0, 20, 320, 140);
   M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
 
   /*
@@ -81,6 +86,10 @@ void loop()
 {
   static uint8_t alternance = 0;
 
+  viewMenu();
+  viewBattery();
+  viewBaseline(alternance);
+
   if (btConnected == false)
   {
     value("NEED PAIRING");
@@ -105,25 +114,6 @@ void loop()
       getSWR();
       break;
     }
-  }
-
-  viewMenu();
-
-  if (alternance == 0)
-  {
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(0);
-    M5.Lcd.setTextPadding(160);
-    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
-    M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
-  }
-  else if (alternance == 20 && WiFi.status() == WL_CONNECTED)
-  {
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(0);
-    M5.Lcd.setTextPadding(160);
-    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
-    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
   }
 
   alternance = (alternance++ < 30) ? alternance : 0;
