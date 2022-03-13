@@ -16,9 +16,13 @@ void setup()
   // Init M5
   M5.begin(true, false, false, false);
 
+  // Init Power
+  power();
+
   // Preferences
   preferences.begin(NAME);
   option = preferences.getUInt("option", 2);
+  brightness = preferences.getUInt("brightness", 64);
 
   // Bin Loader
   binLoader();
@@ -39,11 +43,12 @@ void setup()
   M5.Axp.SetLed(0);
 #endif
 
-  M5.Lcd.setBrightness(64);
+  setBrightness(brightness);
   M5.Lcd.setRotation(1);
   M5.Lcd.fillScreen(TFT_BACK);
 
-  M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 160);
+  M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 20);
+  M5.Lcd.drawJpg(smeterMiddle, sizeof(smeterMiddle), 0, 20, 320, 140);
   M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
 
   /*
@@ -108,8 +113,17 @@ void loop()
   }
 
   viewMenu();
+  viewBattery();
 
-  if (alternance == 0)
+  if(btnL || btnR)
+  {
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(0);
+    M5.Lcd.setTextPadding(160);
+    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+    M5.Lcd.drawString("Brightness " + String(brightness), 160, 160);
+  }
+  else if (alternance == 0)
   {
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.setFreeFont(0);

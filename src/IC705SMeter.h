@@ -11,12 +11,15 @@
 
 #if BOARD == BASIC
   #include <M5Stack.h>
+  #include "BasicAndGrey.h"
   #include "WebIndexBasicAndGrey.h"
 #elif BOARD == GREY
   #include <M5Stack.h>
+  #include "BasicAndGrey.h"
   #include "WebIndexBasicAndGrey.h"
 #elif BOARD == CORE2
   #include <M5Core2.h>
+  #include "Core2.h"
   #include "WebIndexCore2.h"
 #endif
 
@@ -30,7 +33,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "1.8"
+#define VERSION "1.9"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
@@ -52,6 +55,7 @@ WiFiClient httpClient;
 uint8_t htmlGetRequest;
 uint8_t htmlGetRefresh = 3;
 uint8_t option = 2;
+uint8_t brightness = 64;
 boolean reset = true;
 boolean btConnected = false;
 char dataMode = 0;
