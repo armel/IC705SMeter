@@ -253,14 +253,13 @@ void getBinaryList(File dir)
 }
 
 // Bin Loader
-void binLoader()
-{
+void binLoader() {
   boolean click = 0;
   int8_t cursor = 0;
   int8_t change = 255;
   String tmpName;
 
-  if (!SPIFFS.begin())
+  if(!SPIFFS.begin())
   {
     Serial.println("SPIFFS Mount Failed");
 
@@ -277,41 +276,36 @@ void binLoader()
 
     Serial.println("SPIFFS Formating...");
 
-    SPIFFS.format(); // Format SPIFFS...
+    SPIFFS.format();    // Format SPIFFS...
 
     M5.Lcd.setTextFont(0);
     M5.Lcd.setTextSize(0);
 
     return;
   }
-
+  
   root = SPIFFS.open("/");
   getBinaryList(root);
 
-  if (binIndex != 0)
-  {
+  if(binIndex != 0) {
     M5.Lcd.setTextFont(1);
     M5.Lcd.setTextSize(1);
 
     M5.Lcd.setTextColor(TFT_WHITE, TFT_BLACK);
     M5.Lcd.setTextDatum(CC_DATUM);
 
-    for (uint8_t i = TIMEOUT_BIN_LOADER * 10; i > 0; i--)
-    {
-      M5.update();
+    for (uint8_t i = TIMEOUT_BIN_LOADER * 10; i > 0; i--) {
+      getButton();
 
-      if (i % 10 == 0)
-      {
+      if( i % 10 == 0) {
         tmpName += ".";
         M5.Lcd.drawString(tmpName, 160, 20);
       }
 
-      if (M5.BtnA.wasPressed() || M5.BtnC.wasPressed())
-      {
+      if(btnA || btnC) {
         return;
       }
-      else if (M5.BtnB.wasPressed())
-      {
+      else if(btnB) {
         click = 1;
         break;
       }
@@ -320,8 +314,12 @@ void binLoader()
     }
   }
 
-  while (click == 1)
-  {
+  while(click == 1) {
+    while(btnB != 0) {
+      getButton();
+      vTaskDelay(100);
+    }
+
     M5.Lcd.setTextFont(1);
     M5.Lcd.setTextSize(2);
 
@@ -329,39 +327,33 @@ void binLoader()
     M5.Lcd.setTextDatum(CC_DATUM);
     M5.Lcd.drawString("Bin Loader", 160, 20);
 
-    M5.update();
+    getButton();
 
-    if (M5.BtnA.wasPressed())
-    {
+    if(btnA) {
       cursor--;
     }
-    else if (M5.BtnC.wasPressed())
-    {
+    else if(btnC) {
       cursor++;
     }
-    else if (M5.BtnB.wasPressed())
-    {
+    else if(btnB) {
       updateFromFS(SPIFFS, binFilename[cursor]);
-      ESP.restart();
+      ESP.restart(); 
     }
 
     cursor = (cursor < 0) ? binIndex - 1 : cursor;
     cursor = (cursor > binIndex - 1) ? 0 : cursor;
 
-    if (change != cursor)
-    {
+    if(change != cursor) {
       change = cursor;
       M5.Lcd.setTextPadding(320);
 
-      for (uint8_t i = 0; i < binIndex; i++)
-      {
+      for(uint8_t i = 0; i < binIndex; i++) {
         tmpName = binFilename[i].substring(1);
 
-        if (cursor == i)
-        {
+        if (cursor == i) {
           tmpName = ">> " + tmpName + " <<";
         }
-
+        
         M5.Lcd.drawString(tmpName, 160, 60 + i * 20);
       }
     }
