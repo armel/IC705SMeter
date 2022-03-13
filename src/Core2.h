@@ -78,13 +78,13 @@ void getButton()
   if (btnL)
   {
     btnA = 0;
-    Serial.println("Left");
+    //Serial.println("Left");
   }
 
   if (btnR)
   {
     btnC = 0;
-    Serial.println("Right");
+    //Serial.println("Right");
   }
 
   /*

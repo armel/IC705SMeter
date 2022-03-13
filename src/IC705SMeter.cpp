@@ -86,6 +86,10 @@ void loop()
 {
   static uint8_t alternance = 0;
 
+  viewMenu();
+  viewBattery();
+  viewBaseline(alternance);
+
   if (btConnected == false)
   {
     value("NEED PAIRING");
@@ -110,34 +114,6 @@ void loop()
       getSWR();
       break;
     }
-  }
-
-  viewMenu();
-  viewBattery();
-
-  if(btnL || btnR)
-  {
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(0);
-    M5.Lcd.setTextPadding(160);
-    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
-    M5.Lcd.drawString("Brightness " + String(brightness), 160, 160);
-  }
-  else if (alternance == 0)
-  {
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(0);
-    M5.Lcd.setTextPadding(160);
-    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
-    M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
-  }
-  else if (alternance == 20 && WiFi.status() == WL_CONNECTED)
-  {
-    M5.Lcd.setTextDatum(CC_DATUM);
-    M5.Lcd.setFreeFont(0);
-    M5.Lcd.setTextPadding(160);
-    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
-    M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
   }
 
   alternance = (alternance++ < 30) ? alternance : 0;

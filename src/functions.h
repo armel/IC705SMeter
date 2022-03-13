@@ -165,26 +165,63 @@ void subValue(String valString, uint8_t x = 160, uint8_t y = 205)
 // Print option
 void viewMenu()
 {
+  static uint8_t optionOld = 5;
   uint16_t i = 65;
   uint8_t j;
 
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
-  M5.Lcd.setTextPadding(0);
+  if(option != optionOld) {
+    optionOld = option;
 
-  for (j = 0; j <= 2; j++)
-  {
-    if (option == j)
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(&YELLOWCRE8pt7b);
+    M5.Lcd.setTextPadding(0);
+
+    for (j = 0; j <= 2; j++)
     {
-      M5.Lcd.setTextColor(TFT_BLACK);
+      if (option == j)
+      {
+        M5.Lcd.setTextColor(TFT_BLACK);
+        reset = true;
+      }
+      else
+      {
+        M5.Lcd.setTextColor(TFT_DARKGREY);
+      }
+
+      M5.Lcd.drawString(menu[j], i, 230);
+      i += 95;
+    }
+  }
+}
+
+// Print baseline
+void viewBaseline(uint8_t alternance)
+{
+  if(btnL || btnR)
+  {
+    M5.Lcd.setTextDatum(CC_DATUM);
+    M5.Lcd.setFreeFont(0);
+    M5.Lcd.setTextPadding(160);
+    M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+    M5.Lcd.drawString("Brightness " + String(brightness), 160, 160);
+  }
+  else {
+    if (alternance > 20 && WiFi.status() == WL_CONNECTED)
+    {
+      M5.Lcd.setTextDatum(CC_DATUM);
+      M5.Lcd.setFreeFont(0);
+      M5.Lcd.setTextPadding(160);
+      M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+      M5.Lcd.drawString(String(WiFi.localIP().toString().c_str()), 160, 160);
     }
     else
     {
-      M5.Lcd.setTextColor(TFT_DARKGREY);
+      M5.Lcd.setTextDatum(CC_DATUM);
+      M5.Lcd.setFreeFont(0);
+      M5.Lcd.setTextPadding(160);
+      M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
+      M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
     }
-
-    M5.Lcd.drawString(menu[j], i, 230);
-    i += 95;
   }
 }
 
