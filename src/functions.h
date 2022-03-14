@@ -203,7 +203,7 @@ void viewBaseline(uint8_t alternance)
     M5.Lcd.setFreeFont(0);
     M5.Lcd.setTextPadding(160);
     M5.Lcd.setTextColor(TFT_DARKGREY, TFT_BACK);
-    M5.Lcd.drawString("Brightness " + String(brightness), 160, 160);
+    M5.Lcd.drawString("Brightness " + String(map(brightness, 1, 254, 1, 100)) + "%", 160, 160);
   }
   else {
     if (alternance > 20 && WiFi.status() == WL_CONNECTED)
