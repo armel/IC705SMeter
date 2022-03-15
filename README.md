@@ -139,4 +139,10 @@ A l'aide des boutons, vous pouvez changer de mesure :
 
 > Attention : la mesure du SWR est fiable jusqu'à 3. Au dela, la documentation fournie par Icom est trop vague...
 
-En complément, un appui prolongé sur le bouton gauche permet de baisser la luminosité. Et un appui prolongé sur le bouton droit permet d'augmenter la luminosité. La valeur est conservée au prochain redémarrage. 
+En complément :
+
+- un appui prolongé sur le bouton gauche permet de baisser la luminosité, 
+- un appui prolongé sur le bouton central permet d'éteindre le M5Stack,
+- un appui prolongé sur le bouton droit permet d'augmenter la luminosité.
+
+> La valeur de la luminosité est conservée au prochain redemarrage.
