@@ -11,6 +11,7 @@
 ![version](https://img.shields.io/github/v/release/armel/IC705SMeter)
 ![activity](https://img.shields.io/github/commit-activity/y/armel/IC705SMeter)
 
+**For english users, an excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705Meter application. It can help you !** 
 
 Le projet IC7505SMeter permet de doter l'extraordinaire IC705 produit par ICOM, d'un S-Mètre à aiguille !
 Le S-Mètre permet de mesurer le signal S, la puissance Po et le SWR.
