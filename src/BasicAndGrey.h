@@ -1,7 +1,7 @@
 // Copyright (c) F4HWN Armel. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-int btnA, btnB, btnC, btnL, btnR;
+int btnA, btnB, btnC, btnL, btnM, btnR;
 
 // Power init
 void power()
@@ -29,6 +29,7 @@ void getButton()
   btnB = M5.BtnB.read();
   btnC = M5.BtnC.read();
   btnL = M5.BtnA.pressedFor(2000);
+  btnM = M5.BtnB.pressedFor(2000);
   btnR = M5.BtnC.pressedFor(2000);
 
   if (btnL)
@@ -36,8 +37,12 @@ void getButton()
     btnA = 0;
     //Serial.println("Left");
   }
-
-  if (btnR)
+  else if (btnM)
+  {
+    btnB = 0;
+    //Serial.println("Middle");
+  }
+  else if (btnR)
   {
     btnC = 0;
     //Serial.println("Right");
@@ -56,4 +61,10 @@ void getButton()
 void setBrightness(uint8_t value)
 {
   M5.Lcd.setBrightness(value);
+}
+
+// Shutdown
+void shutdown()
+{
+  M5.Power.powerOFF();
 }

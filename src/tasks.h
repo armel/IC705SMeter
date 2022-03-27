@@ -37,6 +37,9 @@ void button(void *pvParameters)
       preferences.putUInt("brightness", brightness);
       vTaskDelay(pdMS_TO_TICKS(50));
     }
+    else if (btnM == 1) {
+      shutdown();
+    }
     else if (btnR == 1) {
       brightness += 1;
       if(brightness > 254) {

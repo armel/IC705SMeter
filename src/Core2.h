@@ -1,7 +1,7 @@
 // Copyright (c) F4HWN Armel. All rights reserved.
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
-int btnA, btnB, btnC, btnL, btnR;
+int btnA, btnB, btnC, btnL, btnM, btnR;
 
 // Expand virtual fucking button
 Button myBtnA(0, 200, 100, 80);
@@ -73,6 +73,7 @@ void getButton()
   btnB = myBtnB.read();
   btnC = myBtnC.read();
   btnL = myBtnA.pressedFor(2000);
+  btnM = myBtnB.pressedFor(2000);
   btnR = myBtnC.pressedFor(2000);
 
   if (btnL)
@@ -80,12 +81,16 @@ void getButton()
     btnA = 0;
     //Serial.println("Left");
   }
-
-  if (btnR)
+  else if (btnM)
+  {
+    btnB = 0;
+    //Serial.println("Middle");
+  }
+  else if (btnR)
   {
     btnC = 0;
     //Serial.println("Right");
-  }
+  } 
 
   /*
   Serial.print(btnA);
@@ -101,4 +106,10 @@ void setBrightness(uint8_t value)
 {
   uint16_t tmp = map(value, 0, 128, 2500, 3300);
   M5.Axp.SetLcdVoltage(tmp); // from 2500 to 3300
+}
+
+// Shutdown
+void shutdown()
+{
+  M5.Axp.PowerOff();
 }
