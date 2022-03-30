@@ -147,7 +147,7 @@ In addition :
 
 - a long press on the left button allows to decrease the brightness, 
 - a long press on the central button allows to switch off the M5Stack,
-- A long press on the right button allows to increase the brightness.
+- a long press on the right button allows to increase the brightness.
 
 > The value of the brightness is preserved at the next restart.
 
