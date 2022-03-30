@@ -13,7 +13,7 @@
 
 **An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you !** 
 
-The IC7505SMeter project allows to equip the extraordinary IC705 produced by ICOM, with a needle S-Meter! The S-Meter allows to measure the S signal, the Po power and the SWR. It also displays the current frequency, mode and filter.
+The IC7505SMeter project allows to equip the extraordinary IC705 produced by ICOM, with a needle S-Meter ! The S-Meter allows to measure the S signal, the Po power and the SWR. It also displays the current frequency, mode and filter.
 
 ![IC705SMeter S](https://github.com/armel/IC705SMeter/blob/main/img/S.png)
 
@@ -153,6 +153,6 @@ In addition :
 
 ## Donations
 
-If you find this app fun and useful then [offer me a beer](https://www.paypal.me/F4HWN) :) 
+If you find this project fun and useful then [offer me a beer](https://www.paypal.me/F4HWN) :) 
 
 By the way, you can follow me on [Twitter](https://twitter.com/F4HWN) and post pictures of your installation with your M5Stack. It always makes me happy ;) 
