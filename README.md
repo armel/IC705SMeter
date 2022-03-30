@@ -29,7 +29,7 @@ The IC7505SMeter project allows to equip the extraordinary IC705 produced by ICO
 
 In terms of size and weight, it is very compact: 54 x 54 x 18mm for 47.2g. Can be carried in the pocket without any problem ;)
 
-## Detailed technical specs :
+## Detailed technical specs
 
 Here are the detailed technical specs, for the curious:
 
