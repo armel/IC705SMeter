@@ -14,7 +14,7 @@ void setup()
   Serial.begin(115200);
 
   // Init M5
-  M5.begin(true, true, false, false);
+  M5.begin(true, false, false, false);
 
   // Init Power
   power();
