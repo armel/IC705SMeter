@@ -1,22 +1,25 @@
-# IC705MultiMeter
+# IC705SMeter
 ![basic](https://img.shields.io/badge/M5Stack-BASIC-blue)
 ![grey](https://img.shields.io/badge/M5Stack-GREY-blue)
 ![fire](https://img.shields.io/badge/M5Stack-FIRE-orange)
 ![core2](https://img.shields.io/badge/M5Stack-CORE2-green)
 ![aws](https://img.shields.io/badge/M5Stack-AWS-orange)
 
-![licence](https://img.shields.io/github/license/armel/IC705MultiMeter)
-![language](https://img.shields.io/github/languages/top/armel/IC705MultiMeter)
-![size](https://img.shields.io/github/repo-size/armel/IC705MultiMeter)
-![version](https://img.shields.io/github/v/release/armel/IC705MultiMeter)
-![activity](https://img.shields.io/github/commit-activity/y/armel/IC705MultiMeter)
+![licence](https://img.shields.io/github/license/armel/IC705SMeter)
+![language](https://img.shields.io/github/languages/top/armel/IC705SMeter)
+![size](https://img.shields.io/github/repo-size/armel/IC705SMeter)
+![version](https://img.shields.io/github/v/release/armel/IC705SMeter)
+![activity](https://img.shields.io/github/commit-activity/y/armel/IC705SMeter)
 
-**An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you ! This is the same approach here.** 
+**An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you !** 
 
-The IC7505MultiMeter project allows you to display the equivalent of the Meter screen of the IC705, directly on the M5Stack screen. This allows you to dedicate the IC705 screen to the Waterfall while having all the measurements on the M5Stack screen.
+The IC7505SMeter project allows to equip the extraordinary IC705 produced by ICOM, with a needle S-Meter ! The S-Meter allows to measure the S signal, the Po power and the SWR. It also displays the current frequency, mode and filter.
 
-![IC705MultiMeter FM](https://github.com/armel/IC705MultiMeter/blob/main/img/FM.png)
-![IC705MultiMeter SSB](https://github.com/armel/IC705MultiMeter/blob/main/img/SSB.png)
+![IC705SMeter S](https://github.com/armel/IC705SMeter/blob/main/img/S.png)
+
+![IC705SMeter PWR](https://github.com/armel/IC705SMeter/blob/main/img/PWR.png)
+
+![IC705SMeter SWR](https://github.com/armel/IC705SMeter/blob/main/img/SWR.png)
 
 # Technical architecture
 
@@ -60,17 +63,17 @@ About the QSJ, count around 45€. You then have a complete development platform
 
 The easiest way is to install [PlateformIO for VSCode](https://platformio.org/install/ide?install=vscode) on your PC (Linux or Windows) or on your Mac (Intel or M1). It is a cross-platform and multilanguage development environment that is powerful and pleasant to use.
 
-Then, still on your PC or Mac, clone the IC705MultiMeter project via the command :
+Then, still on your PC or Mac, clone the IC705SMeter project via the command :
 
-`git clone https://github.com/armel/IC705MultiMeter.git`
+`git clone https://github.com/armel/IC705SMeter.git`
 
-You can also download a [zip archive](https://github.com/armel/IC705MultiMeter/releases) of the project, if you prefer, and unzip it.
+You can also download a [zip archive](https://github.com/armel/IC705SMeter/releases) of the project, if you prefer, and unzip it.
 
-As I said, an excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you ! This is the same approach here.
+As I said, an excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you !
 
 ## Configuration
 
-Open the IC705MultiMeter project with PlateformIO for VSCode.
+Open the IC705SMeter project with PlateformIO for VSCode.
 
 ### File `src/settings.h`
 
@@ -102,7 +105,7 @@ Line 8, change the address of your IC705 if necessary. I have indicated the defa
 
 #### Wifi Configuration 
 
-Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705MultiMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705MultiMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705MultiMeter retrieves is displayed on the screen.
+Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705SMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705SMeter in your browser, just go to `http://ip_address_of_your_ic705smeter/`. As a reminder, the IP address that your IC705SMeter retrieves is displayed on the screen.
 
 > Beware: it's slow! And there is no automatic refresh. You have to click on the background of the screen image to make a new capture. And otherwise, as said, the buttons are functional.
 
@@ -131,6 +134,14 @@ Compile and upload the project to your M5Stack. You are done !
 # Usage
 
 Once launched, you must connect your IC705 to your M5Stack via the menu (Set / Bluetooth Set) of your transceiver. Refer to the documentation, if needed.
+
+Using the buttons, you can change the measurement:
+
+- left: Po or PWR power
+- middle : S signal
+- right : SWR
+
+> Caution: the SWR measurement is reliable up to 3. Beyond that, the documentation provided by Icom is too inaccurate...
 
 In addition :
 
