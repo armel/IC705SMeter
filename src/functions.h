@@ -318,6 +318,7 @@ void binLoader()
 
       if (btnA || btnC)
       {
+        SD.end(); // If not Bluetooth doesn't work !!!
         return;
       }
       else if (btnB)
@@ -396,11 +397,12 @@ void binLoader()
         {
           tmpName = ">> " + tmpName + " <<";
 
-          M5.Lcd.setTextSize(1);
           if(binFilename[cursor].substring(0, 4) == "SP_/") {
+            M5.Lcd.setTextSize(1);
             M5.Lcd.drawString("SPI Flash File Storage", 160, 50);
           }
           else {
+            M5.Lcd.setTextSize(1);
             M5.Lcd.drawString("SD Card Storage", 160, 50);
           }
         }
@@ -412,6 +414,7 @@ void binLoader()
     }
     vTaskDelay(100);
   }
+  SD.end(); // If not Bluetooth doesn't work !!!
 }
 
 // Send CI-V Command
@@ -467,8 +470,7 @@ void getSmeter()
 
   uint8_t val0 = 0;
   float_t val1 = 0;
-  float_t val2 = 0;
-  static uint8_t val3 = 0;
+  static uint8_t val2 = 0;
 
   float_t angle = 0;
 
@@ -482,17 +484,15 @@ void getSmeter()
   if (val0 <= 120)
   { // 120 = S9 = 9 * (40/3)
     val1 = val0 / (40 / 3.0f);
-    val2 = val0 - (val1 * (40 / 3.0f));
   }
   else
   { // 240 = S9 + 60
     val1 = (val0 - 120) / 2.0f;
-    val2 = val0 - (val1 * 2.0f);
   }
 
-  if (abs(val0 - val3) > 1 || reset == true)
+  if (abs(val0 - val2) > 1 || reset == true)
   {
-    val3 = val0;
+    val2 = val0;
     reset = false;
 
     if (val0 <= 13)
@@ -517,8 +517,6 @@ void getSmeter()
     Serial.print(val0);
     Serial.print(" ");
     Serial.print(val1);
-    Serial.print(" ");
-    Serial.print(val2);
     Serial.print(" ");
     Serial.println(angle);
     */
@@ -783,7 +781,7 @@ void getMode()
     M5.Lcd.drawString(valString, 66, 206);
   }
 
-  valString = String(mode[buffer[3]]);
+  valString = String(mode[(uint8_t)buffer[3]]);
 
   getDataMode(); // Data ON or OFF ?
 

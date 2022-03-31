@@ -1,25 +1,22 @@
-# IC705SMeter
+# IC705MultiMeter
 ![basic](https://img.shields.io/badge/M5Stack-BASIC-blue)
 ![grey](https://img.shields.io/badge/M5Stack-GREY-blue)
 ![fire](https://img.shields.io/badge/M5Stack-FIRE-orange)
 ![core2](https://img.shields.io/badge/M5Stack-CORE2-green)
 ![aws](https://img.shields.io/badge/M5Stack-AWS-orange)
 
-![licence](https://img.shields.io/github/license/armel/IC705SMeter)
-![language](https://img.shields.io/github/languages/top/armel/IC705SMeter)
-![size](https://img.shields.io/github/repo-size/armel/IC705SMeter)
-![version](https://img.shields.io/github/v/release/armel/IC705SMeter)
-![activity](https://img.shields.io/github/commit-activity/y/armel/IC705SMeter)
+![licence](https://img.shields.io/github/license/armel/IC705MultiMeter)
+![language](https://img.shields.io/github/languages/top/armel/IC705MultiMeter)
+![size](https://img.shields.io/github/repo-size/armel/IC705MultiMeter)
+![version](https://img.shields.io/github/v/release/armel/IC705MultiMeter)
+![activity](https://img.shields.io/github/commit-activity/y/armel/IC705MultiMeter)
 
-**An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you !** 
+**An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you ! This is the same approach here.** 
 
-The IC7505SMeter project allows to equip the extraordinary IC705 produced by ICOM, with a needle S-Meter ! The S-Meter allows to measure the S signal, the Po power and the SWR. It also displays the current frequency, mode and filter.
+The IC7505MultiMeter project allows you to display the equivalent of the Meter screen of the IC705, directly on the M5Stack screen. This allows you to dedicate the IC705 screen to the Waterfall while having all the measurements on the M5Stack screen.
 
-![IC705SMeter S](https://github.com/armel/IC705SMeter/blob/main/img/S.png)
-
-![IC705SMeter PWR](https://github.com/armel/IC705SMeter/blob/main/img/PWR.png)
-
-![IC705SMeter SWR](https://github.com/armel/IC705SMeter/blob/main/img/SWR.png)
+![IC705MultiMeter FM](https://github.com/armel/IC705MultiMeter/blob/main/img/FM.png)
+![IC705MultiMeter SSB](https://github.com/armel/IC705MultiMeter/blob/main/img/SSB.png)
 
 # Technical architecture
 
@@ -63,17 +60,17 @@ About the QSJ, count around 45€. You then have a complete development platform
 
 The easiest way is to install [PlateformIO for VSCode](https://platformio.org/install/ide?install=vscode) on your PC (Linux or Windows) or on your Mac (Intel or M1). It is a cross-platform and multilanguage development environment that is powerful and pleasant to use.
 
-Then, still on your PC or Mac, clone the IC705SMeter project via the command :
+Then, still on your PC or Mac, clone the IC705MultiMeter project via the command :
 
-`git clone https://github.com/armel/IC705SMeter.git`
+`git clone https://github.com/armel/IC705MultiMeter.git`
 
-You can also download a [zip archive](https://github.com/armel/IC705SMeter/releases) of the project, if you prefer, and unzip it.
+You can also download a [zip archive](https://github.com/armel/IC705MultiMeter/releases) of the project, if you prefer, and unzip it.
 
-As I said, an excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you !
+As I said, an excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you ! This is the same approach here.
 
 ## Configuration
 
-Open the IC705SMeter project with PlateformIO for VSCode.
+Open the IC705MultiMeter project with PlateformIO for VSCode.
 
 ### File `src/settings.h`
 
@@ -105,7 +102,7 @@ Line 8, change the address of your IC705 if necessary. I have indicated the defa
 
 #### Wifi Configuration 
 
-Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705SMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705SMeter in your browser, just go to `http://ip_address_of_your_ic705smeter/`. As a reminder, the IP address that your IC705SMeter retrieves is displayed on the screen.
+Line 11 and 12, indicate your SSID and your Wifi password. You can view your IC705MultiMeter from a simple browser. It is even possible to control it by this way, as the buttons are clickable. In order to display your IC705MultiMeter in your browser, just go to `http://ip_address_of_your_ic705multimeter/`. As a reminder, the IP address that your IC705MultiMeter retrieves is displayed on the screen.
 
 > Beware: it's slow! And there is no automatic refresh. You have to click on the background of the screen image to make a new capture. And otherwise, as said, the buttons are functional.
 
@@ -135,14 +132,6 @@ Compile and upload the project to your M5Stack. You are done !
 
 Once launched, you must connect your IC705 to your M5Stack via the menu (Set / Bluetooth Set) of your transceiver. Refer to the documentation, if needed.
 
-Using the buttons, you can change the measurement:
-
-- left: Po or PWR power
-- middle : S signal
-- right : SWR
-
-> Caution: the SWR measurement is reliable up to 3. Beyond that, the documentation provided by Icom is too inaccurate...
-
 In addition :
 
 - a long press on the left button allows to decrease the brightness, 
@@ -153,7 +142,7 @@ In addition :
 
 # Using the Bin Loader (power user only...)
 
-It's possible to store several applications on the SPI Flash File Storage of your M5Stack. At startup, a procedure is provided to load a particular application.
+It's possible to store several applications on the SPI Flash File Storage of your M5Stack or on SD Card Storage. At startup, a procedure is provided to load a particular application.
 
 ## Preparation
 
@@ -174,9 +163,19 @@ Go to the root of the IC705SMeter folder, which contains the whole project. And 
 - `.pio/build/m5stack-basic-grey`, if you compiled for a GREY or BASIC M5Stack
 - `.pio/build/m5stack-core2`, if you compiled for M5Stack CORE2 or AWS
 
-You will find a `firmware.bin` file there.
+You will find a `firmware.bin` file there. Now, there are 2 solutions...
 
-### Step 3 - SPI Flash File Storage
+### Step 2.1 - SD Card Storage (simple)
+
+Format an SD Card as FAT32.
+
+Copy the `firmware.bin` at the root of the SD Card. And take the opportunity to rename it, for example, `IC705SMeter.bin`.
+
+Do the same with the IC705MultiMeter application. Of course rename it with a different name, for example, `IC705MultiMeter.bin`.
+
+At this point, you should have 2 clearly identified binaries in the root of your SD Card : `IC705SMeter.bin` and `IC705MultiMeter.bin`.
+
+### Step 2.2 - SPI Flash File Storage (more difficult)
 
 Copy `firmware.bin` in the `data` directory at the root of the IC705SMeter folder. And take the opportunity to rename it, for example, `IC705SMeter.bin`.
 
@@ -215,7 +214,7 @@ Start your M5Stack. You should see a black screen, followed by 1, 2 and 3 small 
 As soon as the first little dot appears, you can :
 
 - either press the left or right button, to launch the default application.
-- or press the central button. In this case, the Bin Loader menu appears and offers you the list of available binaries in SPI Flash File Storage. 
+- or press the central button. In this case, the Bin Loader menu appears and offers you the list of available binaries in SPI Flash File Storage or SD Card. 
 
 If you have followed the procedure perfectly, you should have a choice between `IC705SMeter.bin` and `IC705MultiMeter.bin`.
 
@@ -225,7 +224,7 @@ The left and right buttons allow you to switch from one binary to another. And t
 
 ## Limitation
 
-I think it is possible to have 3 or 4 applications cohabit in SPI Flash File Storage.
+I think it is possible to have 3 or 4 applications cohabit in SPI Flash File Storage. If need more, use SD Card Storage.
 
 # Donations
 
