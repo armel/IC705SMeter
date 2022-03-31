@@ -184,11 +184,11 @@ Copy the `firmware.bin` at the root of the SD Card. And take the opportunity to 
 
 Do the same with the IC705MultiMeter application. Of course rename it with a different name, for example, `IC705MultiMeter.bin`.
 
-At this point, you should have 2 clearly identified binaries in the root of your SD Card : IC705SMeter.bin and IC705MultiMeter.bin
+At this point, you should have 2 clearly identified binaries in the root of your SD Card : `IC705SMeter.bin` and `IC705MultiMeter.bin`.
 
 ### Step 2.2 - SPI Flash File Storage (more difficult)
 
-Copy `firmware.bin` in the data directory at the root of the IC705SMeter folder. And take the opportunity to rename it, for example, `IC705SMeter.bin`.
+Copy `firmware.bin` in the `data` directory at the root of the IC705SMeter folder. And take the opportunity to rename it, for example, `IC705SMeter.bin`.
 
 > If the `data` folder does not exist, create it.
 
