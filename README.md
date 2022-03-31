@@ -216,7 +216,7 @@ Step 1, click on the Platformio icon (the icon with an ant's head...). Step 2, u
 
 Finally, step 3, go to the `Platform` sub-section. And click on `Upload Filesystem Image`.
 
-Wait ! It's coffee time (or beer) :) The contents of the `data` directory will be written to the Flash memory of your M5Stack. Are you done? You're there !!!!
+Wait ! It's coffee time (or beer) :) The contents of the `data` directory will be written to the SPI Flash File Storage of your M5Stack. Are you done? You're there !!!!
 
 ## Usage
 
@@ -225,7 +225,7 @@ Start your M5Stack. You should see a black screen, followed by 1, 2 and 3 small 
 As soon as the first little dot appears, you can :
 
 - either press the left or right button, to launch the default application.
-- or press the central button. In this case, the Bin Loader menu appears and offers you the list of available binaries in Flash memory. 
+- or press the central button. In this case, the Bin Loader menu appears and offers you the list of available binaries in SPI Flash File Storage or SD Card. 
 
 If you have followed the procedure perfectly, you should have a choice between `IC705SMeter.bin` and `IC705MultiMeter.bin`.
 
