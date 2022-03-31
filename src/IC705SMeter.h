@@ -23,7 +23,6 @@
   #include "WebIndexCore2.h"
 #endif
 
-#include <WiFiClientSecure.h>
 #include <Preferences.h>
 #include <HTTPClient.h>
 #include "BluetoothSerial.h"
@@ -33,7 +32,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "2.2"
+#define VERSION "2.3"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
@@ -74,7 +73,7 @@ bool buttonRightPressed = false;
 
 // Bin loader
 File root;
-String binFilename[8];
+String binFilename[128];
 uint8_t binIndex = 0;
 
 // Optimize SPI Speed
