@@ -10,3 +10,6 @@
 // Wifi Config
 #define WIFI_SSID       "YOUR WIFI SSID"        // Your WiFi SSID
 #define WIFI_PASSWORD   "YOUR WIFI PASSWORD"    // Your WiFi Password
+
+// Screen Saver Time Out
+#define TIMEOUT_SCREENSAVER 60 * 60 * 1000      // 60 min default timeout (in milli seconds)
