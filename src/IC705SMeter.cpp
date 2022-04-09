@@ -47,17 +47,7 @@ void setup()
   M5.Lcd.setRotation(1);
   M5.Lcd.fillScreen(TFT_BACK);
 
-  M5.Lcd.drawJpg(smeterTop, sizeof(smeterTop), 0, 0, 320, 20);
-  M5.Lcd.drawJpg(smeterMiddle, sizeof(smeterMiddle), 0, 20, 320, 140);
-  M5.Lcd.drawJpg(smeterBottom, sizeof(smeterBottom), 0, 160, 320, 80);
-
-  /*
-  M5.Lcd.setTextDatum(CC_DATUM);
-  M5.Lcd.setFreeFont(0);
-  M5.Lcd.setTextPadding(0);
-  M5.Lcd.setTextColor(TFT_DARKGREY);
-  M5.Lcd.drawString(String(NAME) + " V" + String(VERSION) + " by " + String(AUTHOR), 160, 160);
-  */
+  viewGUI();
 
   CAT.register_callback(callbackBT);
 
@@ -85,39 +75,50 @@ void setup()
 void loop()
 {
   static uint8_t alternance = 0;
+  static uint8_t tx = 0;
 
-  viewMenu();
-  viewBattery();
-  viewBaseline(alternance);
+  tx = getTX();
+  if(tx != 0) screensaver = millis();   // If transmit, refresh tempo
 
-  if (btConnected == false)
-  {
-    value("NEED PAIRING");
-  }
+  if (screensaverMode == 0) {
 
-  if (btConnected == true)
-  {
-    getMode();
-    getFrequency();
+    viewMenu();
+    viewBattery();
+    viewBaseline(alternance);
 
-    switch (option)
+    if (btConnected == false)
     {
-    case 0:
-      getPower();
-      break;
+      value("NEED PAIRING");
+    }
 
-    case 1:
-      getSmeter();
-      break;
+    if (btConnected == true)
+    {
+      getMode();
+      getFrequency();
 
-    case 2:
-      getSWR();
-      break;
+      switch (option)
+      {
+      case 0:
+        getPower();
+        break;
+
+      case 1:
+        getSmeter();
+        break;
+
+      case 2:
+        getSWR();
+        break;
+      }
     }
   }
 
   alternance = (alternance++ < 30) ? alternance : 0;
 
+  // Manage Screen Saver
+  wakeAndSleep();
+
+  // Manage Web Server if enable
   if (WiFi.status() == WL_CONNECTED)
   {
     getScreenshot();

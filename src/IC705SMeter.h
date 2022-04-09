@@ -32,7 +32,7 @@
 #include "SPIFFS.h"
 #include <M5StackUpdater.h>
 
-#define VERSION "2.3.2"
+#define VERSION "2.3.3"
 #define AUTHOR "F4HWN"
 #define NAME "IC705SMeter"
 
@@ -55,8 +55,23 @@ uint8_t htmlGetRequest;
 uint8_t htmlGetRefresh = 3;
 uint8_t option = 2;
 uint8_t brightness = 64;
+uint8_t batteryLevelOld = 0;
+uint8_t optionOld = 5;
+
+uint32_t screensaver;
+
+float angleOld = 0;
+
 boolean reset = true;
+boolean screensaverMode = 0;
 boolean btConnected = false;
+boolean batteryCharginglOld = true;
+
+String modeOld = "";
+String filterOld = "";
+String valStringOld = "";
+String subValStringOld = "";
+
 char dataMode = 0;
 
 const char *menu[] = {"PWR", "S", "SWR"};
