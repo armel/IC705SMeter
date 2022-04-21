@@ -11,6 +11,8 @@
 ![version](https://img.shields.io/github/v/release/armel/IC705SMeter)
 ![activity](https://img.shields.io/github/commit-activity/y/armel/IC705SMeter)
 
+**This project will no longer be maintained. Please see the new [project](https://github.com/armel/ICSMeter/) which is compatible with IC-705, IC-7300 and IC-9700.**
+
 **An excellent [video](https://www.youtube.com/watch?v=SCPEO7Eiy1E&ab_channel=HAMRADIODUDE) was released by @HamRadioDude about the installation of the IC705SMeter project. It can help you !** 
 
 The IC7505SMeter project allows to equip the extraordinary IC705 produced by ICOM, with a needle S-Meter ! The S-Meter allows to measure the S signal, the Po power and the SWR. It also displays the current frequency, mode and filter.
